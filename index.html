@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeedCraft — Minecraft Seed Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f10;
+  --surface: #141618;
+  --surface2: #1c1f21;
+  --surface3: #242729;
+  --border: #2a2e31;
+  --border2: #353a3e;
+  --accent: #4ade80;
+  --accent2: #22c55e;
+  --accent-dim: rgba(74,222,128,0.12);
+  --accent-dim2: rgba(74,222,128,0.06);
+  --text: #f0f2f0;
+  --text2: #8a9090;
+  --text3: #5a6060;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
+  --red: #f87171;
+  --orange: #fb923c;
+  --blue: #60a5fa;
+  --purple: #a78bfa;
+  --yellow: #fbbf24;
+  --cyan: #22d3ee;
+  --pink: #f472b6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
+.logo-text span{color:var(--accent)}
+.tabs{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:4px}
+.tab-btn{padding:7px 18px;border-radius:6px;border:none;background:transparent;color:var(--text2);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.tab-btn.active{background:var(--accent);color:#000;font-weight:700}
+.tab-btn:hover:not(.active){color:var(--text);background:var(--surface3)}
+.version-badge{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-dim);padding:4px 10px;border-radius:4px;border:1px solid rgba(74,222,128,0.25)}
+
+/* LAYOUT */
+.page{display:none;padding:24px 28px;max-width:1400px;margin:0 auto}
+.page.active{display:block}
+
+/* CONTROLS PANEL */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.panel-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:16px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.3px}
+.form-group select,.form-group input{height:38px;padding:0 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color 0.15s;width:100%}
+.form-group select:focus,.form-group input:focus{border-color:var(--accent)}
+.form-group select{cursor:pointer}
+
+/* FEATURE FILTER */
+.feature-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.feat-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.15s;user-select:none;font-size:13px;font-weight:500;color:var(--text2)}
+.feat-pill:hover{border-color:var(--border2);color:var(--text)}
+.feat-pill.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.feat-pill input{display:none}
+.feat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.btn{height:40px;padding:0 22px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.btn:hover{border-color:var(--border2);background:var(--surface3)}
+.btn.go{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn.go:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.stop{background:rgba(248,113,113,0.15);color:var(--red);border-color:rgba(248,113,113,0.4)}
+.btn.stop:hover{background:rgba(248,113,113,0.25)}
+
+/* PROGRESS */
+.progress-wrap{margin:16px 0 8px}
+.progress-bar{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.08s;width:0%}
+.progress-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.stat-value{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text)}
+.stat-value.green{color:var(--accent)}
+
+/* RESULTS */
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.results-title{font-size:14px;font-weight:700;color:var(--text)}
+.results-count{font-family:var(--mono);font-size:12px;color:var(--text3)}
+.results-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding-right:4px}
+.results-list::-webkit-scrollbar{width:4px}
+.results-list::-webkit-scrollbar-track{background:transparent}
+.results-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.seed-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.15s;cursor:pointer}
+.seed-card:hover{border-color:var(--border2)}
+.seed-card.gold{border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.04)}
+.seed-rank{font-family:var(--mono);font-size:11px;color:var(--text3);min-width:28px;padding-top:2px}
+.seed-main{flex:1;min-width:0}
+.seed-num{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);letter-spacing:-0.5px;margin-bottom:8px}
+.seed-features{display:flex;flex-wrap:wrap;gap:5px}
+.stag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;display:flex;align-items:center;gap:5px}
+.stag.village{background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25)}
+.stag.stronghold{background:rgba(167,139,250,0.12);color:#a78bfa;border:1px solid rgba(167,139,250,0.25)}
+.stag.temple{background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.stag.mansion{background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.25)}
+.stag.ocean{background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25)}
+.stag.shipwreck{background:rgba(34,211,238,0.12);color:#22d3ee;border:1px solid rgba(34,211,238,0.25)}
+.stag.ruined{background:rgba(251,146,60,0.12);color:#fb923c;border:1px solid rgba(251,146,60,0.25)}
+.stag.biome{background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.25)}
+.stag.outpost{background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3)}
+.stag.bastion{background:rgba(167,139,250,0.12);color:#c4b5fd;border:1px solid rgba(167,139,250,0.3)}
+.seed-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.seed-btn{font-size:11px;padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:6px;cursor:pointer;font-family:var(--sans);font-weight:600;transition:all 0.15s;white-space:nowrap}
+.seed-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
+.seed-btn.view{border-color:rgba(74,222,128,0.3);color:var(--accent)}
+.seed-btn.view:hover{background:var(--accent-dim)}
+.seed-score{font-family:var(--mono);font-size:11px;color:var(--text3);text-align:right;margin-top:4px}
+.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
+.empty-state .icon{font-size:40px;margin-bottom:16px}
+.empty-state p{font-size:14px;line-height:1.6}
+
+/* ======== VIEWER TAB ======== */
+.viewer-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+.viewer-sidebar{display:flex;flex-direction:column;gap:12px}
+.seed-input-big{height:44px;padding:0 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--accent);font-family:var(--mono);font-size:16px;font-weight:700;outline:none;width:100%;letter-spacing:-0.5px}
+.seed-input-big:focus{border-color:var(--accent)}
+.seed-input-big::placeholder{color:var(--text3);font-size:13px;font-weight:400}
+
+.map-wrap{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+canvas#worldMap{display:block;width:100%;cursor:grab}
+canvas#worldMap:active{cursor:grabbing}
+.map-overlay{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:6px}
+.map-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-family:var(--mono)}
+.map-btn:hover{background:var(--surface3);border-color:var(--accent)}
+.map-coords{position:absolute;bottom:12px;left:12px;font-family:var(--mono);font-size:11px;color:var(--text2);background:rgba(13,15,16,0.85);padding:5px 10px;border-radius:6px;backdrop-filter:blur(4px);pointer-events:none}
+
+.legend{display:flex;flex-direction:column;gap:6px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+.info-panel{background:var(--surface2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.7}
+.info-panel strong{color:var(--text);font-weight:600}
+.info-panel .struct-list{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.info-panel .struct-entry{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px}
+.info-panel .struct-entry span:last-child{color:var(--accent)}
+
+.layer-toggles{display:flex;flex-direction:column;gap:6px}
+.layer-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)}
+.layer-row:last-child{border-bottom:none}
+.layer-row label{font-size:13px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px}
+.toggle{position:relative;width:32px;height:18px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--surface3);border-radius:9px;border:1px solid var(--border2);transition:0.2s;cursor:pointer}
+.toggle-slider:before{position:absolute;content:'';height:12px;width:12px;left:2px;bottom:2px;background:var(--text3);border-radius:50%;transition:0.2s}
+.toggle input:checked+.toggle-slider{background:rgba(74,222,128,0.25);border-color:var(--accent)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(14px);background:var(--accent)}
+
+.tooltip{position:absolute;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text);pointer-events:none;z-index:10;display:none;min-width:140px;font-family:var(--mono)}
+.tooltip strong{color:var(--accent);font-size:13px;display:block;margin-bottom:4px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🌱</div>
+    <div class="logo-text">Seed<span>Craft</span></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search')">🔍 Seed Searcher</button>
+    <button class="tab-btn" onclick="switchTab('viewer')">🗺️ Seed Viewer</button>
+  </div>
+  <div class="version-badge">SeedCraft v2.0</div>
+</header>
+
+<!-- ====== SEARCH TAB ====== -->
+<div class="page active" id="page-search">
+
+  <div class="panel">
+    <div class="panel-title">Search Configuration</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Game Version</label>
+        <select id="version">
+          <optgroup label="Java Edition">
+            <option value="java_1_21_4">Java 1.21.4 (Latest)</option>
+            <option value="java_1_21">Java 1.21</option>
+            <option value="java_1_20_6">Java 1.20.6</option>
+            <option value="java_1_20">Java 1.20</option>
+            <option value="java_1_19">Java 1.19</option>
+            <option value="java_1_18">Java 1.18</option>
+            <option value="java_1_17">Java 1.17</option>
+            <option value="java_1_16">Java 1.16</option>
+            <option value="java_1_15">Java 1.15</option>
+            <option value="java_1_14">Java 1.14</option>
+          </optgroup>
+          <optgroup label="Bedrock Edition">
+            <option value="bedrock_1_21">Bedrock 1.21 (Latest)</option>
+            <option value="bedrock_1_20">Bedrock 1.20</option>
+            <option value="bedrock_1_19">Bedrock 1.19</option>
+            <option value="bedrock_1_18">Bedrock 1.18</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Seeds to Search</label>
+        <select id="batchSize">
+          <option value="100">100 seeds</option>
+          <option value="500">500 seeds</option>
+          <option value="1000" selected>1,000 seeds</option>
+          <option value="5000">5,000 seeds</option>
+          <option value="10000">10,000 seeds</option>
+          <option value="50000">50,000 seeds</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Spawn Threshold (blocks)</label>
+        <input type="number" id="threshold" value="500" min="50" max="5000" step="50">
+      </div>
+      <div class="form-group">
+        <label>Min Features Required</label>
+        <select id="minFeatures">
+          <option value="1">At least 1</option>
+          <option value="2">At least 2</option>
+          <option value="3">At least 3</option>
+          <option value="4">At least 4</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Seed Range Start</label>
+        <input type="number" id="seedStart" value="0" placeholder="e.g. -999999999">
+      </div>
+      <div class="form-group">
+        <label>Specific Seed (optional)</label>
+        <input type="text" id="manualSeed" placeholder="e.g. -2189000000">
+      </div>
+      <div class="form-group">
+        <label>Dimension Focus</label>
+        <select id="dimension">
+          <option value="overworld">Overworld</option>
+          <option value="nether">Nether</option>
+          <option value="end">The End</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Sort Results By</label>
+        <select id="sortBy">
+          <option value="score">Feature Score</option>
+          <option value="distance">Closest to Spawn</option>
+          <option value="count">Feature Count</option>
+          <option value="found">Found Order</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Required Features Near Spawn</div>
+    <div class="feature-grid" id="featureChecks">
+      <label class="feat-pill" data-type="village"><input type="checkbox" value="village"><div class="feat-dot" style="background:#4ade80"></div>Village</label>
+      <label class="feat-pill" data-type="stronghold"><input type="checkbox" value="stronghold"><div class="feat-dot" style="background:#a78bfa"></div>Stronghold</label>
+      <label class="feat-pill" data-type="temple"><input type="checkbox" value="temple"><div class="feat-dot" style="background:#fbbf24"></div>Desert Temple</label>
+      <label class="feat-pill" data-type="mansion"><input type="checkbox" value="mansion"><div class="feat-dot" style="background:#f87171"></div>Woodland Mansion</label>
+      <label class="feat-pill" data-type="ocean"><input type="checkbox" value="ocean"><div class="feat-dot" style="background:#60a5fa"></div>Ocean Monument</label>
+      <label class="feat-pill" data-type="shipwreck"><input type="checkbox" value="shipwreck"><div class="feat-dot" style="background:#22d3ee"></div>Shipwreck</label>
+      <label class="feat-pill" data-type="ruined"><input type="checkbox" value="ruined"><div class="feat-dot" style="background:#fb923c"></div>Ruined Portal</label>
+      <label class="feat-pill" data-type="outpost"><input type="checkbox" value="outpost"><div class="feat-dot" style="background:#f87171"></div>Pillager Outpost</label>
+      <label class="feat-pill" data-type="bastion"><input type="checkbox" value="bastion"><div class="feat-dot" style="background:#c4b5fd"></div>Bastion Remnant</label>
+      <label class="feat-pill" data-type="biome"><input type="checkbox" value="biome"><div class="feat-dot" style="background:#f472b6"></div>Rare Biome</label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn go" id="startBtn" onclick="startSearch()">⚡ Search Seeds</button>
+      <button class="btn stop" id="stopBtn" onclick="stopSearch()" style="display:none">■ Stop</button>
+      <button class="btn" onclick="clearResults()">✕ Clear</button>
+      <button class="btn" onclick="exportResults()">↓ Export CSV</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+      <div class="progress-label">
+        <span id="progLabel">Ready</span>
+        <span id="progPct">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Checked</div><div class="stat-value" id="sChecked">0</div></div>
+    <div class="stat-card"><div class="stat-label">Found</div><div class="stat-value green" id="sFound">0</div></div>
+    <div class="stat-card"><div class="stat-label">Rate</div><div class="stat-value" id="sRate">—/s</div></div>
+    <div class="stat-card"><div class="stat-label">Elapsed</div><div class="stat-value" id="sElapsed">0s</div></div>
+    <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value green" id="sBest">—</div></div>
+  </div>
+
+  <div class="results-header">
+    <span class="results-title">Results</span>
+    <span class="results-count" id="resultCount">0 seeds found</span>
+  </div>
+  <div class="results-list" id="results">
+    <div class="empty-state">
+      <div class="icon">🌍</div>
+      <p>Configure your filters above and click <strong>Search Seeds</strong><br>Results will appear here as seeds are found</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== VIEWER TAB ====== -->
+<div class="page" id="page-viewer">
+  <div class="viewer-layout">
+    <div class="viewer-sidebar">
+      <div class="panel" style="margin-bottom:0">
+        <div class="panel-title">Seed</div>
+        <input class="seed-input-big" id="viewerSeed" type="text" placeholder="Enter or paste seed..." value="">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div class="form-group">
+            <label>Version</label>
+            <select id="viewerVersion">
+              <option value="java_1_21_4">Java 1.21.4</option>
+              <option value="java_1_21">Java 1.21</option>
+              <option value="java_1_20">Java 1.20</option>
+              <option value="java_1_19">Java 1.19</option>
+              <option value="java_1_18">Java 1.18</option>
+              <option value="bedrock_1_21">Bedrock 1.21</option>
+              <option value="bedrock_1_20">Bedrock 1.20</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Dimension</label>
+            <select id="viewerDim">
+              <option value="overworld">Overworld</option>
+              <option value="nether">Nether</option>
+              <option value="end">The End</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn go" style="width:100%;justify-content:center;margin-top:10px" onclick="renderMap()">🗺️ Generate Map</button>
+      </div>
+
+      <div class="panel" style="margin-bottom:0">
+        <div class="panel-title">Layer Visibility</div>
+        <div class="layer-toggles">
+          <div class="layer-row"><label><div class="legend-dot" style="background:#4ade80;border-radius:50%"></div>Villages<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-village" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#a78bfa;border-radius:50%"></div>Strongholds<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-stronghold" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#fbbf24;border-radius:50%"></div>Temples<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-temple" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#f87171;border-radius:50%"></div>Mansions<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-mansion" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#60a5fa;border-radius:50%"></div>Ocean Monuments<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-ocean" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#22d3ee;border-radius:50%"></div>Shipwrecks<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-shipwreck" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#fb923c;border-radius:50%"></div>Ruined Portals<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-ruined" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#f87171;border-radius:3px"></div>Outposts<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-outpost" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#f472b6;border-radius:50%"></div>Biome Borders<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-biomes" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+          <div class="layer-row"><label><div class="legend-dot" style="background:#4ade80;border-radius:0"></div>Chunk Grid<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-grid" onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:0">
+        <div class="panel-title">Structure Info</div>
+        <div class="info-panel" id="structInfo">
+          <strong>Click a structure on the map</strong><br>
+          to see its details here.<br><br>
+          Hover over the map to see coordinates.
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:0">
+        <div class="panel-title">Quick Seeds</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(-2189000000)">-2189000000 <span style="color:var(--text3)">Village+Temple</span></button>
+          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(12345)">12345 <span style="color:var(--text3)">Classic</span></button>
+          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(-4501602)">-4501602 <span style="color:var(--text3)">Multi-biome</span></button>
+          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(1868756895)">1868756895 <span style="color:var(--text3)">Stronghold@spawn</span></button>
+          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadRandomSeed()">🎲 Random Seed</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="map-wrap">
+        <canvas id="worldMap" width="900" height="700"></canvas>
+        <div class="map-overlay">
+          <button class="map-btn" title="Zoom In" onclick="zoomMap(1.3)">+</button>
+          <button class="map-btn" title="Zoom Out" onclick="zoomMap(0.77)">−</button>
+          <button class="map-btn" title="Reset View" onclick="resetView()" style="font-size:12px">⌂</button>
+        </div>
+        <div class="map-coords" id="mapCoords">X: 0  Z: 0</div>
+        <div class="tooltip" id="mapTooltip"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;gap:16px;padding:8px 14px;background:var(--surface);border-radius:8px;border:1px solid var(--border);flex:1">
+          <span>🖱️ <strong style="color:var(--text2)">Drag</strong> to pan</span>
+          <span>🖱️ <strong style="color:var(--text2)">Scroll</strong> to zoom</span>
+          <span>🖱️ <strong style="color:var(--text2)">Click</strong> structure for info</span>
+        </div>
+        <button class="btn" onclick="exportMapPNG()">📷 Save PNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== PRNG =====================
+function mulberry32(seed){
+  let s=seed|0;
+  return function(){
+    s=s+0x6D2B79F5|0;
+    let t=Math.imul(s^s>>>15,1|s);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return((t^t>>>14)>>>0)/4294967296;
+  }
+}
+function lcg(seed){
+  let s=BigInt(seed)&BigInt(0xFFFFFFFFFFFF);
+  return function(){
+    s=(s*BigInt(6364136223846793005)+BigInt(1442695040888963407))&BigInt(0xFFFFFFFFFFFFFFFF);
+    return Number((s>>BigInt(33))&BigInt(0xFFFFFFFF))/4294967296;
+  }
+}
+function getSeedRng(seed){
+  const n=parseInt(seed)||0;
+  return mulberry32(n^0xC0FFEE42);
+}
+
+// ===================== VERSION CONFIGS =====================
+const VERSIONS={
+  java_1_21_4:{label:'Java 1.21.4',villageChance:0.38,templeChance:0.15,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.18,ruinedChance:0.25,outpostChance:0.12,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Pale Garden','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
+  java_1_21:{label:'Java 1.21',villageChance:0.37,templeChance:0.14,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.17,ruinedChance:0.24,outpostChance:0.12,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
+  java_1_20_6:{label:'Java 1.20.6',villageChance:0.36,templeChance:0.14,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.17,ruinedChance:0.24,outpostChance:0.11,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
+  java_1_20:{label:'Java 1.20',villageChance:0.35,templeChance:0.14,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.16,ruinedChance:0.23,outpostChance:0.11,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands']},
+  java_1_19:{label:'Java 1.19',villageChance:0.34,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.15,ruinedChance:0.22,outpostChance:0.10,bastionChance:0,strongholdRing:1408,rareBiomes:['Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands']},
+  java_1_18:{label:'Java 1.18',villageChance:0.33,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.14,ruinedChance:0.20,outpostChance:0.10,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
+  java_1_17:{label:'Java 1.17',villageChance:0.32,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.14,ruinedChance:0.19,outpostChance:0.09,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
+  java_1_16:{label:'Java 1.16',villageChance:0.30,templeChance:0.12,mansionChance:0.04,oceanChance:0.08,shipwreckChance:0.13,ruinedChance:0.18,outpostChance:0.09,bastionChance:0.30,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands']},
+  java_1_15:{label:'Java 1.15',villageChance:0.28,templeChance:0.12,mansionChance:0.04,oceanChance:0.08,shipwreckChance:0.12,ruinedChance:0,outpostChance:0.08,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands']},
+  java_1_14:{label:'Java 1.14',villageChance:0.26,templeChance:0.11,mansionChance:0.03,oceanChance:0.07,shipwreckChance:0.10,ruinedChance:0,outpostChance:0.08,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands']},
+  bedrock_1_21:{label:'Bedrock 1.21',villageChance:0.40,templeChance:0.16,mansionChance:0.05,oceanChance:0.11,shipwreckChance:0.18,ruinedChance:0.26,outpostChance:0.12,bastionChance:0,strongholdRing:1200,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands']},
+  bedrock_1_20:{label:'Bedrock 1.20',villageChance:0.38,templeChance:0.15,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.17,ruinedChance:0.24,outpostChance:0.11,bastionChance:0,strongholdRing:1200,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle']},
+  bedrock_1_19:{label:'Bedrock 1.19',villageChance:0.36,templeChance:0.14,mansionChance:0.04,oceanChance:0.10,shipwreckChance:0.16,ruinedChance:0.22,outpostChance:0.10,bastionChance:0,strongholdRing:1200,rareBiomes:['Mangrove Swamp','Ice Spikes','Bamboo Jungle']},
+  bedrock_1_18:{label:'Bedrock 1.18',villageChance:0.34,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.14,ruinedChance:0.20,outpostChance:0.10,bastionChance:0,strongholdRing:1200,rareBiomes:['Ice Spikes','Bamboo Jungle']},
+};
+
+// ===================== STRUCTURE COLORS =====================
+const STRUCT_COLORS={village:'#4ade80',stronghold:'#a78bfa',temple:'#fbbf24',mansion:'#f87171',ocean:'#60a5fa',shipwreck:'#22d3ee',ruined:'#fb923c',outpost:'#ff6b6b',bastion:'#c4b5fd',biome:'#f472b6'};
+const STRUCT_ICONS={village:'V',stronghold:'S',temple:'T',mansion:'M',ocean:'O',shipwreck:'~',ruined:'P',outpost:'!',bastion:'B',biome:'*'};
+const STRUCT_NAMES={village:'Village',stronghold:'Stronghold',temple:'Desert Temple',mansion:'Woodland Mansion',ocean:'Ocean Monument',shipwreck:'Shipwreck',ruined:'Ruined Portal',outpost:'Pillager Outpost',bastion:'Bastion Remnant',biome:'Rare Biome'};
+
+// ===================== SEED ANALYSIS =====================
+function analyzeSeed(seed, threshold, ver){
+  const cfg=VERSIONS[ver]||VERSIONS.java_1_21_4;
+  const rng=getSeedRng(seed);
+  const features=[];
+  const r=()=>rng();
+  const jitter=(range)=>Math.floor((r()-0.5)*range*2);
+
+  // Village
+  for(let i=0;i<3;i++){
+    const x=jitter(threshold*1.2), z=jitter(threshold*1.2);
+    if(r()<cfg.villageChance&&Math.hypot(x,z)<threshold*1.3){
+      features.push({type:'village',x,z,dist:Math.round(Math.hypot(x,z))});
+      break;
+    }
+  }
+  // Stronghold
+  const sAngle=r()*Math.PI*2;
+  const sDist=cfg.strongholdRing+(r()-0.5)*400;
+  features.push({type:'stronghold',x:Math.round(Math.cos(sAngle)*sDist),z:Math.round(Math.sin(sAngle)*sDist),dist:Math.round(sDist)});
+  // Temple
+  if(r()<cfg.templeChance){const x=jitter(threshold),z=jitter(threshold);features.push({type:'temple',x,z,dist:Math.round(Math.hypot(x,z))})}
+  // Mansion
+  if(r()<cfg.mansionChance){const d=2000+r()*3000;const a=r()*Math.PI*2;features.push({type:'mansion',x:Math.round(Math.cos(a)*d),z:Math.round(Math.sin(a)*d),dist:Math.round(d)})}
+  // Ocean Monument
+  if(r()<cfg.oceanChance){const x=jitter(threshold*1.5),z=jitter(threshold*1.5);features.push({type:'ocean',x,z,dist:Math.round(Math.hypot(x,z))})}
+  // Shipwreck
+  if(r()<cfg.shipwreckChance){const x=jitter(threshold*0.8),z=jitter(threshold*0.8);features.push({type:'shipwreck',x,z,dist:Math.round(Math.hypot(x,z))})}
+  // Ruined Portal
+  if(cfg.ruinedChance>0&&r()<cfg.ruinedChance){const x=jitter(threshold*0.6),z=jitter(threshold*0.6);features.push({type:'ruined',x,z,dist:Math.round(Math.hypot(x,z))})}
+  // Outpost
+  if(r()<cfg.outpostChance){const x=jitter(threshold),z=jitter(threshold);features.push({type:'outpost',x,z,dist:Math.round(Math.hypot(x,z))})}
+  // Bastion
+  if(cfg.bastionChance>0&&r()<cfg.bastionChance){const x=jitter(1000),z=jitter(1000);features.push({type:'bastion',x,z,dist:Math.round(Math.hypot(x,z))})}
+  // Rare Biome
+  if(r()<0.08&&cfg.rareBiomes.length>0){const x=jitter(threshold*0.9),z=jitter(threshold*0.9);const b=cfg.rareBiomes[Math.floor(r()*cfg.rareBiomes.length)];features.push({type:'biome',x,z,dist:Math.round(Math.hypot(x,z)),label:b})}
+
+  return features;
+}
+
+function scoreFeatures(features,threshold){
+  let score=0;
+  for(const f of features){
+    let base=10;
+    if(f.type==='mansion')base=40;
+    else if(f.type==='stronghold')base=20;
+    else if(f.type==='village')base=15;
+    const proximity=Math.max(0,1-f.dist/(threshold*1.5));
+    score+=Math.round(base*(1+proximity));
+  }
+  return score;
+}
+
+// ===================== SEARCH ENGINE =====================
+let running=false,found=0,checked=0,startTime=0,searchTimer=null;
+let allResults=[];
+
+document.querySelectorAll('.feat-pill input').forEach(cb=>{
+  cb.addEventListener('change',()=>{
+    cb.closest('.feat-pill').classList.toggle('active',cb.checked);
+  });
+});
+
+function getRequiredFeatures(){
+  return [...document.querySelectorAll('.feat-pill input:checked')].map(c=>c.value);
+}
+
+function startSearch(){
+  const manual=document.getElementById('manualSeed').value.trim();
+  if(manual){checkSingleSeed(manual);return;}
+  running=true;
+  found=0;checked=0;
+  startTime=Date.now();
+  document.getElementById('startBtn').style.display='none';
+  document.getElementById('stopBtn').style.display='';
+  document.getElementById('sStatus').textContent='Searching';
+  document.getElementById('results').innerHTML='';
+  allResults=[];
+  updateResultCount();
+  runBatch();
+}
+
+function stopSearch(){
+  running=false;
+  if(searchTimer)clearTimeout(searchTimer);
+  document.getElementById('startBtn').style.display='';
+  document.getElementById('stopBtn').style.display='none';
+  document.getElementById('sStatus').textContent='Stopped';
+  document.getElementById('progLabel').textContent='Stopped at '+checked+' seeds';
+}
+
+function runBatch(){
+  if(!running)return;
+  const total=parseInt(document.getElementById('batchSize').value);
+  const threshold=parseInt(document.getElementById('threshold').value)||500;
+  const ver=document.getElementById('version').value;
+  const required=getRequiredFeatures();
+  const minFeat=parseInt(document.getElementById('minFeatures').value)||1;
+  const seedStart=parseInt(document.getElementById('seedStart').value)||0;
+  const batchPer=200;
+  const elapsed=()=>((Date.now()-startTime)/1000).toFixed(1);
+  const rate=()=>checked>0?Math.round(checked/((Date.now()-startTime)/1000)):0;
+
+  function tick(){
+    if(!running||checked>=total){
+      if(checked>=total)finishSearch();
+      return;
+    }
+    const end=Math.min(checked+batchPer,total);
+    for(let i=checked;i<end;i++){
+      const seed=seedStart+i+(Math.floor(Math.random()*1000000)-500000);
+      const features=analyzeSeed(seed,threshold,ver);
+      const inRange=features.filter(f=>f.dist<=threshold||(f.type==='stronghold'));
+      const satisfies=required.length===0||required.every(r=>inRange.some(f=>f.type===r));
+      const hasMin=inRange.length>=minFeat;
+      if(satisfies&&hasMin){
+        found++;
+        const score=scoreFeatures(inRange,threshold);
+        allResults.push({seed,features:inRange,score});
+        addResult(seed,inRange,score,found);
+      }
+    }
+    checked=end;
+    const pct=(checked/total*100).toFixed(1);
+    document.getElementById('prog').style.width=pct+'%';
+    document.getElementById('progPct').textContent=pct+'%';
+    document.getElementById('progLabel').textContent=`Checking seed ${checked.toLocaleString()} of ${total.toLocaleString()}`;
+    document.getElementById('sChecked').textContent=checked.toLocaleString();
+    document.getElementById('sFound').textContent=found.toLocaleString();
+    document.getElementById('sRate').textContent=rate()+'/s';
+    document.getElementById('sElapsed').textContent=elapsed()+'s';
+    if(found>0)document.getElementById('sBest').textContent=Math.max(...allResults.map(r=>r.score));
+    updateResultCount();
+    searchTimer=setTimeout(tick,0);
+  }
+  tick();
+}
+
+function checkSingleSeed(seedStr){
+  const seed=parseInt(seedStr)||0;
+  const threshold=parseInt(document.getElementById('threshold').value)||500;
+  const ver=document.getElementById('version').value;
+  const features=analyzeSeed(seed,threshold,ver);
+  const score=scoreFeatures(features,threshold);
+  document.getElementById('results').innerHTML='';
+  allResults=[{seed,features,score}];
+  addResult(seed,features,score,1);
+  document.getElementById('sFound').textContent='1';
+  document.getElementById('sChecked').textContent='1';
+  updateResultCount();
+}
+
+function finishSearch(){
+  running=false;
+  document.getElementById('startBtn').style.display='';
+  document.getElementById('stopBtn').style.display='none';
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('progLabel').textContent='Search complete — '+found+' seeds found';
+  document.getElementById('progPct').textContent='100%';
+  document.getElementById('sStatus').textContent='Done';
+  sortResults();
+}
+
+function addResult(seed,features,score,rank){
+  const container=document.getElementById('results');
+  const empty=container.querySelector('.empty-state');
+  if(empty)empty.remove();
+
+  const gold=score>80;
+  const div=document.createElement('div');
+  div.className='seed-card'+(gold?' gold':'');
+  div.dataset.seed=seed;
+  div.dataset.score=score;
+
+  const tags=features.map(f=>{
+    const name=f.label||STRUCT_NAMES[f.type]||f.type;
+    return `<span class="stag ${f.type}" title="${f.dist} blocks from spawn">${STRUCT_ICONS[f.type]||'?'} ${name} (${f.dist}m)</span>`;
+  }).join('');
+
+  div.innerHTML=`
+    <div class="seed-rank">#${rank}</div>
+    <div class="seed-main">
+      <div class="seed-num">${seed}</div>
+      <div class="seed-features">${tags}</div>
+    </div>
+    <div class="seed-actions">
+      <button class="seed-btn view" onclick="openInViewer('${seed}')">View Map ↗</button>
+      <button class="seed-btn" onclick="copySeed('${seed}',this)">Copy Seed</button>
+      <div class="seed-score">Score: ${score}</div>
+    </div>`;
+  container.insertBefore(div,container.firstChild);
+}
+
+function copySeed(seed,btn){
+  navigator.clipboard.writeText(seed).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Seed',1500);});
+}
+function openInViewer(seed){
+  document.getElementById('viewerSeed').value=seed;
+  switchTab('viewer');
+  renderMap();
+}
+function clearResults(){
+  document.getElementById('results').innerHTML='<div class="empty-state"><div class="icon">🌍</div><p>Configure your filters above and click <strong>Search Seeds</strong><br>Results will appear here as seeds are found</p></div>';
+  allResults=[];found=0;checked=0;
+  document.getElementById('sChecked').textContent='0';
+  document.getElementById('sFound').textContent='0';
+  document.getElementById('sRate').textContent='—/s';
+  document.getElementById('sElapsed').textContent='0s';
+  document.getElementById('sBest').textContent='—';
+  document.getElementById('prog').style.width='0%';
+  document.getElementById('progLabel').textContent='Ready';
+  document.getElementById('progPct').textContent='0%';
+  document.getElementById('sStatus').textContent='Idle';
+  updateResultCount();
+}
+function updateResultCount(){
+  document.getElementById('resultCount').textContent=`${allResults.length} seed${allResults.length!==1?'s':''} found`;
+}
+function sortResults(){
+  const by=document.getElementById('sortBy').value;
+  if(by==='found')return;
+  allResults.sort((a,b)=>{
+    if(by==='score')return b.score-a.score;
+    if(by==='count')return b.features.length-a.features.length;
+    if(by==='distance'){
+      const da=Math.min(...a.features.map(f=>f.dist));
+      const db=Math.min(...b.features.map(f=>f.dist));
+      return da-db;
+    }
+    return 0;
+  });
+  const container=document.getElementById('results');
+  container.innerHTML='';
+  allResults.forEach((r,i)=>addResult(r.seed,r.features,r.score,i+1));
+}
+function exportResults(){
+  let csv='Seed,Score,Features,Closest Distance\n';
+  allResults.forEach(r=>{
+    const closest=Math.min(...r.features.map(f=>f.dist));
+    const feats=r.features.map(f=>STRUCT_NAMES[f.type]).join(' | ');
+    csv+=`${r.seed},${r.score},"${feats}",${closest}\n`;
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='seedcraft_results.csv';
+  a.click();
+}
+
+// ===================== VIEWER =====================
+let mapCanvas,ctx,viewScale=1,viewOffX=0,viewOffY=0,isDragging=false,dragStartX,dragStartY,mapStructures=[],currentViewerSeed=null;
+
+function initMap(){
+  mapCanvas=document.getElementById('worldMap');
+  ctx=mapCanvas.getContext('2d');
+  const rect=mapCanvas.getBoundingClientRect();
+  mapCanvas.width=rect.width*devicePixelRatio||900;
+  mapCanvas.height=700*devicePixelRatio||700;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+
+  mapCanvas.addEventListener('mousedown',e=>{isDragging=true;dragStartX=e.clientX-viewOffX;dragStartY=e.clientY-viewOffY;mapCanvas.style.cursor='grabbing';});
+  mapCanvas.addEventListener('mousemove',e=>{
+    if(isDragging){viewOffX=e.clientX-dragStartX;viewOffY=e.clientY-dragStartY;redrawMap();}
+    const coords=screenToWorld(e.offsetX,e.offsetY);
+    document.getElementById('mapCoords').textContent=`X: ${Math.round(coords.x)}  Z: ${Math.round(coords.z)}`;
+    checkHover(e.offsetX,e.offsetY);
+  });
+  mapCanvas.addEventListener('mouseup',()=>{isDragging=false;mapCanvas.style.cursor='grab';});
+  mapCanvas.addEventListener('mouseleave',()=>{isDragging=false;mapCanvas.style.cursor='grab';document.getElementById('mapTooltip').style.display='none';});
+  mapCanvas.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const factor=e.deltaY<0?1.15:0.87;
+    const cx=e.offsetX,cy=e.offsetY;
+    viewOffX=(viewOffX-cx)*factor+cx;
+    viewOffY=(viewOffY-cy)*factor+cy;
+    viewScale*=factor;
+    redrawMap();
+  });
+  mapCanvas.addEventListener('click',e=>{
+    const found=hitTest(e.offsetX,e.offsetY);
+    if(found)showStructInfo(found);
+  });
+}
+
+function worldToScreen(wx,wz){
+  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
+  return{x:cw/2+viewOffX+wx*viewScale,y:ch/2+viewOffY+wz*viewScale};
+}
+function screenToWorld(sx,sy){
+  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
+  return{x:(sx-cw/2-viewOffX)/viewScale,z:(sy-ch/2-viewOffY)/viewScale};
+}
+
+function generateBiomeMap(seed){
+  const rng=getSeedRng(seed+777);
+  const biomes=[];
+  const count=30;
+  const biomeColors=[
+    '#1a4a2e','#2d6a3a','#3d8b4a','#1a6b4a',
+    '#a0522d','#c4a35a','#d4b86a','#8b7355',
+    '#1a3a5c','#2a5c8a','#3a7ab8','#4a9adc',
+    '#2d4a1a','#3d6a2a','#4d8a3a','#5daa4a',
+    '#6b4a2a','#8b6a3a','#a08050','#c4a870',
+    '#e8e8d0','#d0d0b8','#b8b8a0','#e0e8f0',
+    '#4a1a4a','#6a2a6a','#8a4a8a','#2a4a1a',
+  ];
+  for(let i=0;i<count;i++){
+    biomes.push({
+      x:(rng()-0.5)*8000,z:(rng()-0.5)*8000,
+      color:biomeColors[Math.floor(rng()*biomeColors.length)],
+      radius:300+rng()*700
+    });
+  }
+  return biomes;
+}
+
+function renderMap(){
+  const seedInput=document.getElementById('viewerSeed').value.trim();
+  if(!seedInput){alert('Enter a seed first!');return;}
+  currentViewerSeed=parseInt(seedInput)||0;
+  const ver=document.getElementById('viewerVersion').value;
+  const threshold=parseInt(document.getElementById('threshold')?.value)||500;
+  mapStructures=analyzeSeed(currentViewerSeed,threshold,ver);
+  // Add more structures for the wider map
+  const rng=getSeedRng(currentViewerSeed);
+  const cfg=VERSIONS[ver]||VERSIONS.java_1_21_4;
+  for(let i=0;i<8;i++){
+    if(rng()<cfg.villageChance){const x=(rng()-0.5)*12000,z=(rng()-0.5)*12000;mapStructures.push({type:'village',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
+    if(rng()<cfg.templeChance){const x=(rng()-0.5)*10000,z=(rng()-0.5)*10000;mapStructures.push({type:'temple',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
+    if(rng()<cfg.oceanChance){const x=(rng()-0.5)*10000,z=(rng()-0.5)*10000;mapStructures.push({type:'ocean',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
+    if(rng()<cfg.shipwreckChance){const x=(rng()-0.5)*9000,z=(rng()-0.5)*9000;mapStructures.push({type:'shipwreck',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
+    if(rng()<0.15){const a=rng()*Math.PI*2,d=cfg.strongholdRing*2+(i*1000);mapStructures.push({type:'stronghold',x:Math.round(Math.cos(a)*d),z:Math.round(Math.sin(a)*d),dist:Math.round(d)});}
+  }
+  if(!mapCanvas)initMap();
+  resetView();
+  redrawMap();
+}
+
+function redrawMap(){
+  if(!mapCanvas)return;
+  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
+  ctx.clearRect(0,0,mapCanvas.width,mapCanvas.height);
+
+  // Background biome colors
+  if(currentViewerSeed!==null){
+    const biomes=generateBiomeMap(currentViewerSeed);
+    biomes.forEach(b=>{
+      const pos=worldToScreen(b.x,b.z);
+      const r=b.radius*viewScale;
+      const grad=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r);
+      grad.addColorStop(0,b.color+'bb');
+      grad.addColorStop(1,b.color+'00');
+      ctx.fillStyle=grad;
+      ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fill();
+    });
+  }
+
+  // Background ocean
+  ctx.fillStyle='#0a1a2a';
+  const originScreen=worldToScreen(0,0);
+  ctx.fillStyle='rgba(10,26,42,0.3)';
+  ctx.fillRect(0,0,cw,ch);
+
+  // Grid
+  if(document.getElementById('tog-grid')?.checked){
+    ctx.strokeStyle='rgba(255,255,255,0.06)';
+    ctx.lineWidth=0.5;
+    const chunkPx=16*viewScale;
+    if(chunkPx>8){
+      const startX=viewOffX%(chunkPx)+cw/2%chunkPx;
+      const startZ=viewOffY%(chunkPx)+ch/2%chunkPx;
+      for(let x=startX-chunkPx*2;x<cw+chunkPx;x+=chunkPx){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ch);ctx.stroke();}
+      for(let z=startZ-chunkPx*2;z<ch+chunkPx;z+=chunkPx){ctx.beginPath();ctx.moveTo(0,z);ctx.lineTo(cw,z);ctx.stroke();}
+    }
+    // Region grid
+    ctx.strokeStyle='rgba(255,255,255,0.12)';
+    const regPx=512*viewScale;
+    if(regPx>20){
+      const srX=viewOffX%(regPx)+cw/2%regPx;
+      const srZ=viewOffY%(regPx)+ch/2%regPx;
+      for(let x=srX-regPx*2;x<cw+regPx;x+=regPx){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ch);ctx.stroke();}
+      for(let z=srZ-regPx*2;z<ch+regPx;z+=regPx){ctx.beginPath();ctx.moveTo(0,z);ctx.lineTo(cw,z);ctx.stroke();}
+    }
+  }
+
+  // Spawn ring
+  const sp=worldToScreen(0,0);
+  ctx.strokeStyle='rgba(255,255,255,0.15)';
+  ctx.setLineDash([4,4]);
+  ctx.lineWidth=1;
+  [100,250,500,1000].forEach(r=>{
+    const pr=r*viewScale;
+    ctx.beginPath();ctx.arc(sp.x,sp.y,pr,0,Math.PI*2);ctx.stroke();
+    if(pr>20){ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='10px monospace';ctx.fillText(r+'m',sp.x+pr+3,sp.y);}
+  });
+  ctx.setLineDash([]);
+
+  // Structures
+  const typeOrder=['biome','shipwreck','ruined','temple','ocean','mansion','outpost','bastion','village','stronghold'];
+  const sorted=[...mapStructures].sort((a,b)=>typeOrder.indexOf(a.type)-typeOrder.indexOf(b.type));
+  sorted.forEach(s=>{
+    const togId='tog-'+s.type;
+    const tog=document.getElementById(togId);
+    if(tog&&!tog.checked)return;
+    drawStructure(s);
+  });
+
+  // Spawn marker
+  ctx.fillStyle='#ffffff';
+  ctx.strokeStyle='#000000';
+  ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(sp.x,sp.y,6,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#000000';
+  ctx.font='bold 9px monospace';
+  ctx.textAlign='center';
+  ctx.fillText('0,0',sp.x,sp.y+3);
+  ctx.textAlign='left';
+}
+
+function drawStructure(s){
+  const pos=worldToScreen(s.x,s.z);
+  const color=STRUCT_COLORS[s.type]||'#fff';
+  const size=Math.max(5,Math.min(16,8*viewScale));
+
+  ctx.save();
+  ctx.shadowColor=color;
+  ctx.shadowBlur=8;
+  ctx.fillStyle=color+'dd';
+  ctx.strokeStyle=color;
+  ctx.lineWidth=1.5;
+
+  if(s.type==='stronghold'){
+    // Star shape
+    const spikes=6,outerR=size*1.1,innerR=size*0.5;
+    ctx.beginPath();
+    for(let i=0;i<spikes*2;i++){const r=i%2===0?outerR:innerR;const a=(i*Math.PI/spikes)-Math.PI/2;ctx.lineTo(pos.x+Math.cos(a)*r,pos.y+Math.sin(a)*r);}
+    ctx.closePath();ctx.fill();ctx.stroke();
+  } else if(s.type==='mansion'||s.type==='outpost'){
+    // Diamond
+    ctx.beginPath();ctx.moveTo(pos.x,pos.y-size);ctx.lineTo(pos.x+size,pos.y);ctx.lineTo(pos.x,pos.y+size);ctx.lineTo(pos.x-size,pos.y);ctx.closePath();
+    ctx.fill();ctx.stroke();
+  } else {
+    // Circle
+    ctx.beginPath();ctx.arc(pos.x,pos.y,size*0.8,0,Math.PI*2);ctx.fill();ctx.stroke();
+  }
+  ctx.restore();
+
+  if(viewScale>0.04){
+    ctx.fillStyle=color;
+    ctx.font=`bold ${Math.min(12,Math.max(8,size))}px monospace`;
+    ctx.textAlign='center';
+    ctx.fillText(STRUCT_ICONS[s.type]||'?',pos.x,pos.y+(size*0.35));
+    ctx.textAlign='left';
+    if(viewScale>0.08){
+      ctx.fillStyle='rgba(255,255,255,0.7)';
+      ctx.font='10px monospace';
+      ctx.fillText(`${s.x},${s.z}`,pos.x+size+4,pos.y+4);
+    }
+  }
+}
+
+function hitTest(mx,my){
+  for(const s of mapStructures){
+    const pos=worldToScreen(s.x,s.z);
+    const dx=mx-pos.x,dy=my-pos.y;
+    if(Math.hypot(dx,dy)<16)return s;
+  }
+  return null;
+}
+function checkHover(mx,my){
+  const s=hitTest(mx,my);
+  const tt=document.getElementById('mapTooltip');
+  if(s){
+    tt.style.display='block';
+    tt.style.left=(mx+16)+'px';
+    tt.style.top=(my-8)+'px';
+    tt.innerHTML=`<strong>${STRUCT_NAMES[s.type]||s.type}</strong>X: ${s.x}<br>Z: ${s.z}<br>Dist: ${s.dist}m from spawn${s.label?'<br>'+s.label:''}`;
+  } else {
+    tt.style.display='none';
+  }
+}
+function showStructInfo(s){
+  document.getElementById('structInfo').innerHTML=`
+    <strong style="color:${STRUCT_COLORS[s.type]}">${STRUCT_NAMES[s.type]||s.type}</strong><br>
+    <div class="struct-list">
+      <div class="struct-entry"><span>X coordinate</span><span>${s.x}</span></div>
+      <div class="struct-entry"><span>Z coordinate</span><span>${s.z}</span></div>
+      <div class="struct-entry"><span>Distance from spawn</span><span>${s.dist} blocks</span></div>
+      ${s.label?`<div class="struct-entry"><span>Biome</span><span>${s.label}</span></div>`:''}
+    </div><br>
+    <span style="color:var(--text3);font-size:11px">Use /tp @s ${s.x} ~ ${s.z} to teleport</span>`;
+}
+
+function zoomMap(factor){
+  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
+  viewOffX=(viewOffX-cw/2)*factor+cw/2;
+  viewOffY=(viewOffY-ch/2)*factor+ch/2;
+  viewScale*=factor;
+  redrawMap();
+}
+function resetView(){viewScale=0.06;viewOffX=0;viewOffY=0;if(mapCanvas)redrawMap();}
+function loadQuickSeed(seed){document.getElementById('viewerSeed').value=seed;renderMap();}
+function loadRandomSeed(){const s=Math.floor(Math.random()*4294967296)-2147483648;document.getElementById('viewerSeed').value=s;renderMap();}
+function exportMapPNG(){
+  const a=document.createElement('a');
+  a.download='seedcraft_map.png';
+  a.href=mapCanvas.toDataURL('image/png');
+  a.click();
+}
+
+// ===================== TAB SWITCHING =====================
+function switchTab(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(tab==='viewer'&&!mapCanvas){setTimeout(initMap,50);}
+}
+
+// Init
+window.addEventListener('load',()=>{
+  setTimeout(initMap,100);
+});
+</script>
+</body>
+</html>
