@@ -178,20 +178,26 @@ async function validateKey(key) {
 }
 
 // Poll an operation until done or timeout
+// opPath is like "operations/abc123" — prepend /assets/v1/ for the full path
 async function pollOperation(opPath, onProgress) {
-  const max = 20, delay = 3000;
+  const max = 24, delay = 3000;
   for (let i = 0; i < max; i++) {
     await new Promise(r => setTimeout(r, delay));
     try {
-      const r = await rbxGet('/' + opPath);
+      // Roblox operation poll endpoint: GET /assets/v1/{opPath}
+      const fullPath = '/assets/v1/' + opPath;
+      const r = await rbxGet(fullPath);
       const d = await r.json();
-      onProgress(`⏳ Polling operation… (${i+1}/${max})\n${JSON.stringify(d, null, 2)}`);
-      // done when response field exists or status is done/complete
-      if (d.response || d.done === true || (d.status && d.status !== 'pending' && d.status !== 'running')) {
-        const assetId = d.response?.assetId || d.assetId || d.response?.asset?.assetId;
+      console.log('Poll response:', d);
+      onProgress(`⏳ Polling… (${i+1}/${max})\ndone=${d.done}\n${JSON.stringify(d, null, 2)}`);
+
+      // Response shape: { done: bool, path: string, response: { assetId: number, ... } }
+      if (d.done === true) {
+        // assetId is a number in response.assetId
+        const assetId = d.response?.assetId;
         return { done: true, assetId: assetId ? String(assetId) : null, raw: d };
       }
-    } catch {}
+    } catch(e) { console.warn('Poll error:', e); }
   }
   return { done: false };
 }
@@ -359,6 +365,19 @@ async function loadAssets() {
       }));
     }
   } catch {}
+
+  // Resume polling for any locally stored assets that are still pending
+  const pending = localAssets.filter(a => a.opPath);
+  for (const pa of pending) {
+    (async () => {
+      const result = await pollOperation(pa.opPath, () => {});
+      if (result.done && result.assetId) {
+        const idx = localAssets.findIndex(a => a.opPath === pa.opPath);
+        if (idx !== -1) { localAssets[idx].id = result.assetId; localAssets[idx].opPath = null; saveLocal(localAssets); }
+        renderGrid();
+      }
+    })();
+  }
 }
 
 function renderGrid() {
@@ -574,14 +593,35 @@ async function doCreate() {
       const idx = localAssets.findIndex(a => a.opPath === opPath);
       if (idx !== -1) { localAssets[idx].id = result.assetId; localAssets[idx].opPath = null; saveLocal(localAssets); }
       ms.busy = false;
-      setStatus(`✓ Done! Asset ID: ${result.assetId}`, 'ok');
+      setStatus(`✓ Asset created!\nAsset ID: ${result.assetId}\n\nClick the ID below to copy it.`, 'ok');
+      // inject a copy button into the status
+      setTimeout(() => {
+        const st = document.getElementById('mstatus');
+        if (st) {
+          const btn = document.createElement('button');
+          btn.textContent = '📋 Copy Asset ID: ' + result.assetId;
+          btn.style.cssText = 'margin-top:0.6rem;display:block;background:var(--bg3);border:1px solid var(--green);color:var(--green);padding:0.4rem 0.8rem;border-radius:6px;font-family:Space Mono,monospace;font-size:0.75rem;cursor:pointer;width:100%;';
+          btn.onclick = () => { navigator.clipboard.writeText(result.assetId).then(() => { btn.textContent = '✓ Copied!'; }); };
+          st.appendChild(btn);
+        }
+      }, 50);
       renderGrid();
-      setTimeout(closeModal, 2500);
+      // don't auto-close — let user copy the ID
     } else {
       ms.busy = false;
-      setStatus(`✓ Uploaded! Asset is being processed by Roblox.\nCheck back soon — it may take a few minutes.`, 'ok');
+      // Asset uploaded but operation didn't finish in time — try to resume polling in background
+      const pendingMsg = `✓ Uploaded! Roblox is still processing.\nOperation: ${opPath}\n\nThe ID will appear in your asset list once ready.`;
+      setStatus(pendingMsg, 'ok');
       renderGrid();
-      setTimeout(closeModal, 3000);
+      // Keep polling in background and update the card when done
+      (async () => {
+        const bg = await pollOperation(opPath, () => {});
+        if (bg.done && bg.assetId) {
+          const idx = localAssets.findIndex(a => a.opPath === opPath);
+          if (idx !== -1) { localAssets[idx].id = bg.assetId; localAssets[idx].opPath = null; saveLocal(localAssets); }
+          renderGrid();
+        }
+      })();
     }
 
   } catch (e) {
