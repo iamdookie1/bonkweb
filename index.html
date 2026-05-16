@@ -523,20 +523,24 @@ async function doCreate() {
 
   try {
     // Build the request metadata JSON string — must match Roblox's schema exactly
+    // userId/groupId must be a STRING per official Roblox curl examples
     const creatorKey = creatorInfo?.type === 'group' ? 'groupId' : 'userId';
     const requestObj = {
       assetType: 'Decal',
       displayName: ms.name,
       description: 'Uploaded via Asset Forge',
       creationContext: {
-        creator: { [creatorKey]: Number(creatorInfo?.id) }
+        creator: { [creatorKey]: String(creatorInfo?.id) }
       }
     };
+    const requestJson = JSON.stringify(requestObj);
+    console.log('Sending request field:', requestJson);
+    setStatus(`⏳ Sending…\n${requestJson}`, 'info');
 
     // Build FormData — browser FormData is parsed by busboy in the proxy and rebuilt cleanly
     const form = new FormData();
-    // 'request' field: must be the raw JSON string (not a Blob)
-    form.append('request', JSON.stringify(requestObj));
+    // 'request' field: plain JSON string, no Blob wrapper
+    form.append('request', requestJson);
     // 'fileContent' field: the actual binary file
     form.append('fileContent', blob, `asset.${ms.fmt}`);
 
