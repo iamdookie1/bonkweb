@@ -9,52 +9,35 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type, x-api-key, x-roblox-path, x-roblox-method',
 };
 
-/**
- * Parse an incoming multipart/form-data request with Busboy.
- * Returns { fields: {name: stringValue}, files: {name: {buffer, filename, mimeType}} }
- */
 function parseMultipart(req) {
   return new Promise((resolve, reject) => {
     const fields = {};
     const files = {};
-
     const bb = Busboy({ headers: req.headers });
-
-    bb.on('field', (name, value) => {
-      fields[name] = value;
-    });
-
+    bb.on('field', (name, value) => { fields[name] = value; });
     bb.on('file', (name, stream, info) => {
       const chunks = [];
       stream.on('data', c => chunks.push(c));
       stream.on('end', () => {
-        files[name] = {
-          buffer: Buffer.concat(chunks),
-          filename: info.filename,
-          mimeType: info.mimeType,
-        };
+        files[name] = { buffer: Buffer.concat(chunks), filename: info.filename, mimeType: info.mimeType };
       });
     });
-
     bb.on('finish', () => resolve({ fields, files }));
     bb.on('error', reject);
-
     req.pipe(bb);
   });
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers on every response
   for (const [k, v] of Object.entries(CORS)) res.setHeader(k, v);
-
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
-  const apiKey     = req.headers['x-api-key'];
-  const robloxPath = req.headers['x-roblox-path'];
+  const apiKey       = req.headers['x-api-key'];
+  const robloxPath   = req.headers['x-roblox-path'];
   const robloxMethod = (req.headers['x-roblox-method'] || 'GET').toUpperCase();
 
   if (!apiKey || !robloxPath) {
-    res.status(400).json({ error: 'Missing x-api-key or x-roblox-path header' });
+    res.status(400).json({ error: 'Missing x-api-key or x-roblox-path' });
     return;
   }
 
@@ -64,27 +47,24 @@ export default async function handler(req, res) {
     let rbxRes;
 
     if (robloxMethod === 'GET' || robloxMethod === 'HEAD') {
-      // Simple GET (e.g. validation check, list assets, poll operation)
-      rbxRes = await fetch(url, {
-        method: robloxMethod,
-        headers: { 'x-api-key': apiKey },
-      });
+      rbxRes = await fetch(url, { method: robloxMethod, headers: { 'x-api-key': apiKey } });
+
     } else {
-      // POST/PATCH — parse the incoming multipart and rebuild it cleanly
       const { fields, files } = await parseMultipart(req);
 
-      // Build a fresh FormData with form-data npm package (generates valid boundary)
+      // Log what we received for debugging
+      console.log('fields.request:', fields.request);
+      console.log('files:', Object.keys(files));
+
       const form = new FormData();
 
-      // 'request' field: must be the JSON string exactly as Roblox expects it.
-      // Roblox wants the value to literally be the JSON string (like curl --form 'request="..."')
+      // CRITICAL: append 'request' as a plain string with NO content-type header on the part.
+      // Roblox parses this as a plain text field containing JSON.
+      // Do NOT pass options object — that adds a Content-Type sub-header that breaks parsing.
       if (fields.request) {
-        form.append('request', fields.request, {
-          contentType: 'application/json',
-        });
+        form.append('request', fields.request);
       }
 
-      // 'fileContent' field: the actual binary file
       if (files.fileContent) {
         const { buffer, filename, mimeType } = files.fileContent;
         form.append('fileContent', buffer, {
@@ -94,13 +74,13 @@ export default async function handler(req, res) {
         });
       }
 
+      const formHeaders = form.getHeaders();
+      console.log('Sending to Roblox with headers:', { 'x-api-key': '***', ...formHeaders });
+      console.log('Form buffer length:', form.getBuffer().length);
+
       rbxRes = await fetch(url, {
         method: robloxMethod,
-        headers: {
-          'x-api-key': apiKey,
-          // form-data generates the correct Content-Type with boundary
-          ...form.getHeaders(),
-        },
+        headers: { 'x-api-key': apiKey, ...formHeaders },
         body: form.getBuffer(),
       });
     }
