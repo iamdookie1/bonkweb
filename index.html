@@ -1,983 +1,886 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SeedCraft — Minecraft Seed Explorer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Roblox Asset Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-:root {
-  --bg: #0d0f10;
-  --surface: #141618;
-  --surface2: #1c1f21;
-  --surface3: #242729;
-  --border: #2a2e31;
-  --border2: #353a3e;
-  --accent: #4ade80;
-  --accent2: #22c55e;
-  --accent-dim: rgba(74,222,128,0.12);
-  --accent-dim2: rgba(74,222,128,0.06);
-  --text: #f0f2f0;
-  --text2: #8a9090;
-  --text3: #5a6060;
-  --mono: 'Space Mono', monospace;
-  --sans: 'Syne', sans-serif;
-  --red: #f87171;
-  --orange: #fb923c;
-  --blue: #60a5fa;
-  --purple: #a78bfa;
-  --yellow: #fbbf24;
-  --cyan: #22d3ee;
-  --pink: #f472b6;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.logo-text{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--text)}
-.logo-text span{color:var(--accent)}
-.tabs{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:4px}
-.tab-btn{padding:7px 18px;border-radius:6px;border:none;background:transparent;color:var(--text2);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s}
-.tab-btn.active{background:var(--accent);color:#000;font-weight:700}
-.tab-btn:hover:not(.active){color:var(--text);background:var(--surface3)}
-.version-badge{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-dim);padding:4px 10px;border-radius:4px;border:1px solid rgba(74,222,128,0.25)}
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #10101a;
+    --bg3: #16162a;
+    --border: #2a2a4a;
+    --border2: #3a3a6a;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --card: #12121f;
+  }
 
-/* LAYOUT */
-.page{display:none;padding:24px 28px;max-width:1400px;margin:0 auto}
-.page.active{display:block}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* CONTROLS PANEL */
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
-.panel-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:16px}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
-.form-group{display:flex;flex-direction:column;gap:6px}
-.form-group label{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.3px}
-.form-group select,.form-group input{height:38px;padding:0 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color 0.15s;width:100%}
-.form-group select:focus,.form-group input:focus{border-color:var(--accent)}
-.form-group select{cursor:pointer}
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,229,255,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* FEATURE FILTER */
-.feature-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.feat-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.15s;user-select:none;font-size:13px;font-weight:500;color:var(--text2)}
-.feat-pill:hover{border-color:var(--border2);color:var(--text)}
-.feat-pill.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
-.feat-pill input{display:none}
-.feat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .app { position: relative; z-index: 1; min-height: 100vh; }
 
-/* BUTTONS */
-.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.btn{height:40px;padding:0 22px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;white-space:nowrap;display:flex;align-items:center;gap:8px}
-.btn:hover{border-color:var(--border2);background:var(--surface3)}
-.btn.go{background:var(--accent);color:#000;border-color:var(--accent)}
-.btn.go:hover{background:var(--accent2);border-color:var(--accent2)}
-.btn.stop{background:rgba(248,113,113,0.15);color:var(--red);border-color:rgba(248,113,113,0.4)}
-.btn.stop:hover{background:rgba(248,113,113,0.25)}
+  /* ── SCREEN 1: API Key ── */
+  .screen-api {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 2rem;
+  }
 
-/* PROGRESS */
-.progress-wrap{margin:16px 0 8px}
-.progress-bar{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.08s;width:0%}
-.progress-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px}
+  .logo-area { text-align: center; margin-bottom: 3rem; }
+  .logo-icon {
+    width: 72px; height: 72px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 1.2rem; box-shadow: 0 0 40px rgba(0,229,255,0.2);
+  }
+  .logo-title { font-size: 2.4rem; font-weight: 700; letter-spacing: 2px; color: #fff; }
+  .logo-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.75rem; margin-top: 0.3rem; letter-spacing: 1px; }
 
-/* STATS ROW */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-.stat-label{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
-.stat-value{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text)}
-.stat-value.green{color:var(--accent)}
+  .api-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%; max-width: 480px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
 
-/* RESULTS */
-.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.results-title{font-size:14px;font-weight:700;color:var(--text)}
-.results-count{font-family:var(--mono);font-size:12px;color:var(--text3)}
-.results-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding-right:4px}
-.results-list::-webkit-scrollbar{width:4px}
-.results-list::-webkit-scrollbar-track{background:transparent}
-.results-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+  .api-card h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.4rem; }
+  .api-card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.8rem; line-height: 1.5; }
 
-.seed-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.15s;cursor:pointer}
-.seed-card:hover{border-color:var(--border2)}
-.seed-card.gold{border-color:rgba(251,191,36,0.4);background:rgba(251,191,36,0.04)}
-.seed-rank{font-family:var(--mono);font-size:11px;color:var(--text3);min-width:28px;padding-top:2px}
-.seed-main{flex:1;min-width:0}
-.seed-num{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);letter-spacing:-0.5px;margin-bottom:8px}
-.seed-features{display:flex;flex-wrap:wrap;gap:5px}
-.stag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;display:flex;align-items:center;gap:5px}
-.stag.village{background:rgba(74,222,128,0.12);color:#4ade80;border:1px solid rgba(74,222,128,0.25)}
-.stag.stronghold{background:rgba(167,139,250,0.12);color:#a78bfa;border:1px solid rgba(167,139,250,0.25)}
-.stag.temple{background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
-.stag.mansion{background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.25)}
-.stag.ocean{background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25)}
-.stag.shipwreck{background:rgba(34,211,238,0.12);color:#22d3ee;border:1px solid rgba(34,211,238,0.25)}
-.stag.ruined{background:rgba(251,146,60,0.12);color:#fb923c;border:1px solid rgba(251,146,60,0.25)}
-.stag.biome{background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.25)}
-.stag.outpost{background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3)}
-.stag.bastion{background:rgba(167,139,250,0.12);color:#c4b5fd;border:1px solid rgba(167,139,250,0.3)}
-.seed-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
-.seed-btn{font-size:11px;padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:6px;cursor:pointer;font-family:var(--sans);font-weight:600;transition:all 0.15s;white-space:nowrap}
-.seed-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
-.seed-btn.view{border-color:rgba(74,222,128,0.3);color:var(--accent)}
-.seed-btn.view:hover{background:var(--accent-dim)}
-.seed-score{font-family:var(--mono);font-size:11px;color:var(--text3);text-align:right;margin-top:4px}
-.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
-.empty-state .icon{font-size:40px;margin-bottom:16px}
-.empty-state p{font-size:14px;line-height:1.6}
+  .field-label {
+    display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px;
+    color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase;
+  }
 
-/* ======== VIEWER TAB ======== */
-.viewer-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
-.viewer-sidebar{display:flex;flex-direction:column;gap:12px}
-.seed-input-big{height:44px;padding:0 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--accent);font-family:var(--mono);font-size:16px;font-weight:700;outline:none;width:100%;letter-spacing:-0.5px}
-.seed-input-big:focus{border-color:var(--accent)}
-.seed-input-big::placeholder{color:var(--text3);font-size:13px;font-weight:400}
+  .api-input {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.85rem 1rem; color: var(--text);
+    font-family: 'Space Mono', monospace; font-size: 0.82rem;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .api-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
+  .api-input.error { border-color: var(--red); }
+  .api-input.valid { border-color: var(--green); }
 
-.map-wrap{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-canvas#worldMap{display:block;width:100%;cursor:grab}
-canvas#worldMap:active{cursor:grabbing}
-.map-overlay{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:6px}
-.map-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-family:var(--mono)}
-.map-btn:hover{background:var(--surface3);border-color:var(--accent)}
-.map-coords{position:absolute;bottom:12px;left:12px;font-family:var(--mono);font-size:11px;color:var(--text2);background:rgba(13,15,16,0.85);padding:5px 10px;border-radius:6px;backdrop-filter:blur(4px);pointer-events:none}
+  .error-msg { color: var(--red); font-size: 0.82rem; margin-top: 0.5rem; font-family: 'Space Mono', monospace; }
+  .valid-msg { color: var(--green); font-size: 0.82rem; margin-top: 0.5rem; font-family: 'Space Mono', monospace; }
 
-.legend{display:flex;flex-direction:column;gap:6px}
-.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
-.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+  .toggle-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin: 1.2rem 0 1.8rem; cursor: pointer; user-select: none;
+  }
+  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0; border-radius: 12px;
+    background: var(--bg3); border: 1px solid var(--border);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .toggle input:checked ~ .toggle-track { background: var(--accent2); border-color: var(--accent2); }
+  .toggle-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; transition: transform 0.2s;
+  }
+  .toggle input:checked ~ .toggle-track .toggle-thumb { transform: translateX(20px); }
+  .toggle-label { font-size: 0.9rem; color: var(--muted); }
+  .toggle-label span { color: var(--text); font-weight: 600; }
 
-.info-panel{background:var(--surface2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.7}
-.info-panel strong{color:var(--text);font-weight:600}
-.info-panel .struct-list{margin-top:8px;display:flex;flex-direction:column;gap:4px}
-.info-panel .struct-entry{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px}
-.info-panel .struct-entry span:last-child{color:var(--accent)}
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.8rem 1.4rem; border-radius: 8px; font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem; font-weight: 700; letter-spacing: 1px;
+    border: none; cursor: pointer; transition: all 0.18s; text-transform: uppercase;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #fff; box-shadow: 0 4px 20px rgba(0,229,255,0.15);
+    width: 100%; justify-content: center;
+  }
+  .btn-primary:hover { filter: brightness(1.12); box-shadow: 0 4px 28px rgba(0,229,255,0.3); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.layer-toggles{display:flex;flex-direction:column;gap:6px}
-.layer-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)}
-.layer-row:last-child{border-bottom:none}
-.layer-row label{font-size:13px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px}
-.toggle{position:relative;width:32px;height:18px}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--surface3);border-radius:9px;border:1px solid var(--border2);transition:0.2s;cursor:pointer}
-.toggle-slider:before{position:absolute;content:'';height:12px;width:12px;left:2px;bottom:2px;background:var(--text3);border-radius:50%;transition:0.2s}
-.toggle input:checked+.toggle-slider{background:rgba(74,222,128,0.25);border-color:var(--accent)}
-.toggle input:checked+.toggle-slider:before{transform:translateX(14px);background:var(--accent)}
+  .btn-ghost {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
 
-.tooltip{position:absolute;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text);pointer-events:none;z-index:10;display:none;min-width:140px;font-family:var(--mono)}
-.tooltip strong{color:var(--accent);font-size:13px;display:block;margin-bottom:4px}
+  .btn-create {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #fff; font-size: 0.9rem; padding: 0.65rem 1.2rem;
+  }
+  .btn-create:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--surface)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #dc2626; }
+
+  .spinner {
+    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SCREEN 2: Dashboard ── */
+  .screen-dashboard { min-height: 100vh; padding: 0 0 4rem; }
+
+  .topbar {
+    background: rgba(16,16,26,0.9); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px); padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+  .topbar-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  }
+  .topbar-title { font-size: 1.3rem; font-weight: 700; letter-spacing: 1.5px; }
+  .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+
+  .key-badge {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.4rem 0.8rem;
+    font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .key-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+  .main { padding: 2rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.2rem;
+  }
+  .section-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+
+  .groupbox {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+
+  .asset-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px;
+    background: var(--border);
+  }
+  .asset-grid:empty { background: transparent; }
+
+  .asset-card {
+    background: var(--bg2); padding: 1.2rem; display: flex; flex-direction: column;
+    gap: 0.8rem; position: relative; transition: background 0.15s;
+  }
+  .asset-card:hover { background: var(--bg3); }
+
+  .asset-preview {
+    width: 100%; aspect-ratio: 1; border-radius: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .asset-preview img, .asset-preview svg { width: 100%; height: 100%; object-fit: contain; }
+  .asset-preview-placeholder {
+    font-size: 2rem; opacity: 0.2;
+  }
+
+  .asset-badge {
+    position: absolute; top: 6px; right: 6px; width: 10px; height: 10px;
+    border-radius: 50%; box-shadow: 0 0 8px currentColor;
+  }
+  .badge-green { background: var(--green); color: var(--green); }
+  .badge-yellow { background: var(--yellow); color: var(--yellow); }
+
+  .asset-name {
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 0.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .asset-id { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+  .asset-type-tag {
+    display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    background: var(--bg3); border: 1px solid var(--border); color: var(--muted);
+    width: fit-content;
+  }
+
+  .empty-state {
+    padding: 4rem 2rem; text-align: center; color: var(--muted);
+  }
+  .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+  .empty-state p { font-size: 0.95rem; }
+
+  /* ── CREATE MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px); z-index: 200;
+    display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+    animation: fadeIn 0.15s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; width: 100%; max-width: 520px;
+    box-shadow: 0 0 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .modal-header {
+    padding: 1.5rem 1.8rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; }
+
+  .modal-body { padding: 1.5rem 1.8rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  .modal-footer {
+    padding: 1rem 1.8rem 1.5rem;
+    display: flex; gap: 0.75rem; justify-content: flex-end;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .tab-row { display: flex; gap: 0.5rem; }
+  .tab-btn {
+    padding: 0.45rem 1rem; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; cursor: pointer;
+    transition: all 0.15s; text-transform: uppercase;
+  }
+  .tab-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .tab-btn:not(.active):hover { border-color: var(--border2); color: var(--text); }
+
+  .paste-area {
+    width: 100%; min-height: 100px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.85rem 1rem; color: var(--text);
+    font-family: 'Space Mono', monospace; font-size: 0.78rem;
+    outline: none; resize: vertical; transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+  .paste-area:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.08); }
+
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: 8px;
+    padding: 1.5rem; text-align: center; cursor: pointer;
+    transition: all 0.15s; color: var(--muted); font-size: 0.9rem;
+  }
+  .upload-zone:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.03); }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .upload-name { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--green); margin-top: 0.4rem; word-break: break-all; }
+
+  .type-tabs { display: flex; gap: 0.5rem; }
+
+  .status-bar {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; font-family: 'Space Mono', monospace; font-size: 0.75rem;
+    color: var(--muted); line-height: 1.5;
+  }
+  .status-bar.error { border-color: var(--red); color: var(--red); }
+  .status-bar.success { border-color: var(--green); color: var(--green); }
+
+  .sign-out-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 0.45rem 0.9rem; border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600;
+    letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s;
+  }
+  .sign-out-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .progress-ring { display: flex; align-items: center; gap: 0.5rem; color: var(--accent); font-size: 0.8rem; font-family: 'Space Mono', monospace; }
+
+  .legend { display: flex; gap: 1.5rem; margin-top: 0.75rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50; }
+
+  @media (max-width: 600px) {
+    .topbar { padding: 1rem; }
+    .main { padding: 1.5rem 1rem; }
+    .modal { margin: 0.5rem; }
+    .asset-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .key-badge { display: none; }
+  }
 </style>
 </head>
 <body>
+<div id="root"></div>
+<script type="module">
+// ──────────────────────────────────────────────
+// Roblox Asset Creator
+// ──────────────────────────────────────────────
+const STORAGE_KEY_API = 'roblox_asset_creator_apikey';
+const STORAGE_KEY_ASSETS = 'roblox_asset_creator_local_assets';
 
-<header>
-  <div class="logo">
-    <div class="logo-icon">🌱</div>
-    <div class="logo-text">Seed<span>Craft</span></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('search')">🔍 Seed Searcher</button>
-    <button class="tab-btn" onclick="switchTab('viewer')">🗺️ Seed Viewer</button>
-  </div>
-  <div class="version-badge">SeedCraft v2.0</div>
-</header>
-
-<!-- ====== SEARCH TAB ====== -->
-<div class="page active" id="page-search">
-
-  <div class="panel">
-    <div class="panel-title">Search Configuration</div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Game Version</label>
-        <select id="version">
-          <optgroup label="Java Edition">
-            <option value="java_1_21_4">Java 1.21.4 (Latest)</option>
-            <option value="java_1_21">Java 1.21</option>
-            <option value="java_1_20_6">Java 1.20.6</option>
-            <option value="java_1_20">Java 1.20</option>
-            <option value="java_1_19">Java 1.19</option>
-            <option value="java_1_18">Java 1.18</option>
-            <option value="java_1_17">Java 1.17</option>
-            <option value="java_1_16">Java 1.16</option>
-            <option value="java_1_15">Java 1.15</option>
-            <option value="java_1_14">Java 1.14</option>
-          </optgroup>
-          <optgroup label="Bedrock Edition">
-            <option value="bedrock_1_21">Bedrock 1.21 (Latest)</option>
-            <option value="bedrock_1_20">Bedrock 1.20</option>
-            <option value="bedrock_1_19">Bedrock 1.19</option>
-            <option value="bedrock_1_18">Bedrock 1.18</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Seeds to Search</label>
-        <select id="batchSize">
-          <option value="100">100 seeds</option>
-          <option value="500">500 seeds</option>
-          <option value="1000" selected>1,000 seeds</option>
-          <option value="5000">5,000 seeds</option>
-          <option value="10000">10,000 seeds</option>
-          <option value="50000">50,000 seeds</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Spawn Threshold (blocks)</label>
-        <input type="number" id="threshold" value="500" min="50" max="5000" step="50">
-      </div>
-      <div class="form-group">
-        <label>Min Features Required</label>
-        <select id="minFeatures">
-          <option value="1">At least 1</option>
-          <option value="2">At least 2</option>
-          <option value="3">At least 3</option>
-          <option value="4">At least 4</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Seed Range Start</label>
-        <input type="number" id="seedStart" value="0" placeholder="e.g. -999999999">
-      </div>
-      <div class="form-group">
-        <label>Specific Seed (optional)</label>
-        <input type="text" id="manualSeed" placeholder="e.g. -2189000000">
-      </div>
-      <div class="form-group">
-        <label>Dimension Focus</label>
-        <select id="dimension">
-          <option value="overworld">Overworld</option>
-          <option value="nether">Nether</option>
-          <option value="end">The End</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Sort Results By</label>
-        <select id="sortBy">
-          <option value="score">Feature Score</option>
-          <option value="distance">Closest to Spawn</option>
-          <option value="count">Feature Count</option>
-          <option value="found">Found Order</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title">Required Features Near Spawn</div>
-    <div class="feature-grid" id="featureChecks">
-      <label class="feat-pill" data-type="village"><input type="checkbox" value="village"><div class="feat-dot" style="background:#4ade80"></div>Village</label>
-      <label class="feat-pill" data-type="stronghold"><input type="checkbox" value="stronghold"><div class="feat-dot" style="background:#a78bfa"></div>Stronghold</label>
-      <label class="feat-pill" data-type="temple"><input type="checkbox" value="temple"><div class="feat-dot" style="background:#fbbf24"></div>Desert Temple</label>
-      <label class="feat-pill" data-type="mansion"><input type="checkbox" value="mansion"><div class="feat-dot" style="background:#f87171"></div>Woodland Mansion</label>
-      <label class="feat-pill" data-type="ocean"><input type="checkbox" value="ocean"><div class="feat-dot" style="background:#60a5fa"></div>Ocean Monument</label>
-      <label class="feat-pill" data-type="shipwreck"><input type="checkbox" value="shipwreck"><div class="feat-dot" style="background:#22d3ee"></div>Shipwreck</label>
-      <label class="feat-pill" data-type="ruined"><input type="checkbox" value="ruined"><div class="feat-dot" style="background:#fb923c"></div>Ruined Portal</label>
-      <label class="feat-pill" data-type="outpost"><input type="checkbox" value="outpost"><div class="feat-dot" style="background:#f87171"></div>Pillager Outpost</label>
-      <label class="feat-pill" data-type="bastion"><input type="checkbox" value="bastion"><div class="feat-dot" style="background:#c4b5fd"></div>Bastion Remnant</label>
-      <label class="feat-pill" data-type="biome"><input type="checkbox" value="biome"><div class="feat-dot" style="background:#f472b6"></div>Rare Biome</label>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn go" id="startBtn" onclick="startSearch()">⚡ Search Seeds</button>
-      <button class="btn stop" id="stopBtn" onclick="stopSearch()" style="display:none">■ Stop</button>
-      <button class="btn" onclick="clearResults()">✕ Clear</button>
-      <button class="btn" onclick="exportResults()">↓ Export CSV</button>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
-      <div class="progress-label">
-        <span id="progLabel">Ready</span>
-        <span id="progPct">0%</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Checked</div><div class="stat-value" id="sChecked">0</div></div>
-    <div class="stat-card"><div class="stat-label">Found</div><div class="stat-value green" id="sFound">0</div></div>
-    <div class="stat-card"><div class="stat-label">Rate</div><div class="stat-value" id="sRate">—/s</div></div>
-    <div class="stat-card"><div class="stat-label">Elapsed</div><div class="stat-value" id="sElapsed">0s</div></div>
-    <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value green" id="sBest">—</div></div>
-  </div>
-
-  <div class="results-header">
-    <span class="results-title">Results</span>
-    <span class="results-count" id="resultCount">0 seeds found</span>
-  </div>
-  <div class="results-list" id="results">
-    <div class="empty-state">
-      <div class="icon">🌍</div>
-      <p>Configure your filters above and click <strong>Search Seeds</strong><br>Results will appear here as seeds are found</p>
-    </div>
-  </div>
-</div>
-
-<!-- ====== VIEWER TAB ====== -->
-<div class="page" id="page-viewer">
-  <div class="viewer-layout">
-    <div class="viewer-sidebar">
-      <div class="panel" style="margin-bottom:0">
-        <div class="panel-title">Seed</div>
-        <input class="seed-input-big" id="viewerSeed" type="text" placeholder="Enter or paste seed..." value="">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-          <div class="form-group">
-            <label>Version</label>
-            <select id="viewerVersion">
-              <option value="java_1_21_4">Java 1.21.4</option>
-              <option value="java_1_21">Java 1.21</option>
-              <option value="java_1_20">Java 1.20</option>
-              <option value="java_1_19">Java 1.19</option>
-              <option value="java_1_18">Java 1.18</option>
-              <option value="bedrock_1_21">Bedrock 1.21</option>
-              <option value="bedrock_1_20">Bedrock 1.20</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Dimension</label>
-            <select id="viewerDim">
-              <option value="overworld">Overworld</option>
-              <option value="nether">Nether</option>
-              <option value="end">The End</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn go" style="width:100%;justify-content:center;margin-top:10px" onclick="renderMap()">🗺️ Generate Map</button>
-      </div>
-
-      <div class="panel" style="margin-bottom:0">
-        <div class="panel-title">Layer Visibility</div>
-        <div class="layer-toggles">
-          <div class="layer-row"><label><div class="legend-dot" style="background:#4ade80;border-radius:50%"></div>Villages<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-village" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#a78bfa;border-radius:50%"></div>Strongholds<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-stronghold" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#fbbf24;border-radius:50%"></div>Temples<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-temple" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#f87171;border-radius:50%"></div>Mansions<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-mansion" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#60a5fa;border-radius:50%"></div>Ocean Monuments<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-ocean" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#22d3ee;border-radius:50%"></div>Shipwrecks<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-shipwreck" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#fb923c;border-radius:50%"></div>Ruined Portals<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-ruined" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#f87171;border-radius:3px"></div>Outposts<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-outpost" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#f472b6;border-radius:50%"></div>Biome Borders<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-biomes" checked onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-          <div class="layer-row"><label><div class="legend-dot" style="background:#4ade80;border-radius:0"></div>Chunk Grid<label class="toggle" style="margin-left:auto"><input type="checkbox" id="tog-grid" onchange="redrawMap()"><span class="toggle-slider"></span></label></label></div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-bottom:0">
-        <div class="panel-title">Structure Info</div>
-        <div class="info-panel" id="structInfo">
-          <strong>Click a structure on the map</strong><br>
-          to see its details here.<br><br>
-          Hover over the map to see coordinates.
-        </div>
-      </div>
-
-      <div class="panel" style="margin-bottom:0">
-        <div class="panel-title">Quick Seeds</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(-2189000000)">-2189000000 <span style="color:var(--text3)">Village+Temple</span></button>
-          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(12345)">12345 <span style="color:var(--text3)">Classic</span></button>
-          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(-4501602)">-4501602 <span style="color:var(--text3)">Multi-biome</span></button>
-          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadQuickSeed(1868756895)">1868756895 <span style="color:var(--text3)">Stronghold@spawn</span></button>
-          <button class="btn" style="justify-content:space-between;width:100%;font-size:12px" onclick="loadRandomSeed()">🎲 Random Seed</button>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="map-wrap">
-        <canvas id="worldMap" width="900" height="700"></canvas>
-        <div class="map-overlay">
-          <button class="map-btn" title="Zoom In" onclick="zoomMap(1.3)">+</button>
-          <button class="map-btn" title="Zoom Out" onclick="zoomMap(0.77)">−</button>
-          <button class="map-btn" title="Reset View" onclick="resetView()" style="font-size:12px">⌂</button>
-        </div>
-        <div class="map-coords" id="mapCoords">X: 0  Z: 0</div>
-        <div class="tooltip" id="mapTooltip"></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;gap:16px;padding:8px 14px;background:var(--surface);border-radius:8px;border:1px solid var(--border);flex:1">
-          <span>🖱️ <strong style="color:var(--text2)">Drag</strong> to pan</span>
-          <span>🖱️ <strong style="color:var(--text2)">Scroll</strong> to zoom</span>
-          <span>🖱️ <strong style="color:var(--text2)">Click</strong> structure for info</span>
-        </div>
-        <button class="btn" onclick="exportMapPNG()">📷 Save PNG</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ===================== PRNG =====================
-function mulberry32(seed){
-  let s=seed|0;
-  return function(){
-    s=s+0x6D2B79F5|0;
-    let t=Math.imul(s^s>>>15,1|s);
-    t=t+Math.imul(t^t>>>7,61|t)^t;
-    return((t^t>>>14)>>>0)/4294967296;
+// ── Helpers ──
+function $(id) { return document.getElementById(id); }
+function el(tag, attrs = {}, ...children) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else e.setAttribute(k, v);
   }
-}
-function lcg(seed){
-  let s=BigInt(seed)&BigInt(0xFFFFFFFFFFFF);
-  return function(){
-    s=(s*BigInt(6364136223846793005)+BigInt(1442695040888963407))&BigInt(0xFFFFFFFFFFFFFFFF);
-    return Number((s>>BigInt(33))&BigInt(0xFFFFFFFF))/4294967296;
+  for (const c of children) {
+    if (typeof c === 'string') e.appendChild(document.createTextNode(c));
+    else if (c) e.appendChild(c);
   }
-}
-function getSeedRng(seed){
-  const n=parseInt(seed)||0;
-  return mulberry32(n^0xC0FFEE42);
+  return e;
 }
 
-// ===================== VERSION CONFIGS =====================
-const VERSIONS={
-  java_1_21_4:{label:'Java 1.21.4',villageChance:0.38,templeChance:0.15,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.18,ruinedChance:0.25,outpostChance:0.12,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Pale Garden','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
-  java_1_21:{label:'Java 1.21',villageChance:0.37,templeChance:0.14,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.17,ruinedChance:0.24,outpostChance:0.12,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
-  java_1_20_6:{label:'Java 1.20.6',villageChance:0.36,templeChance:0.14,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.17,ruinedChance:0.24,outpostChance:0.11,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
-  java_1_20:{label:'Java 1.20',villageChance:0.35,templeChance:0.14,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.16,ruinedChance:0.23,outpostChance:0.11,bastionChance:0,strongholdRing:1280,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands']},
-  java_1_19:{label:'Java 1.19',villageChance:0.34,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.15,ruinedChance:0.22,outpostChance:0.10,bastionChance:0,strongholdRing:1408,rareBiomes:['Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands']},
-  java_1_18:{label:'Java 1.18',villageChance:0.33,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.14,ruinedChance:0.20,outpostChance:0.10,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
-  java_1_17:{label:'Java 1.17',villageChance:0.32,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.14,ruinedChance:0.19,outpostChance:0.09,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands','Mushroom Island']},
-  java_1_16:{label:'Java 1.16',villageChance:0.30,templeChance:0.12,mansionChance:0.04,oceanChance:0.08,shipwreckChance:0.13,ruinedChance:0.18,outpostChance:0.09,bastionChance:0.30,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands']},
-  java_1_15:{label:'Java 1.15',villageChance:0.28,templeChance:0.12,mansionChance:0.04,oceanChance:0.08,shipwreckChance:0.12,ruinedChance:0,outpostChance:0.08,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands']},
-  java_1_14:{label:'Java 1.14',villageChance:0.26,templeChance:0.11,mansionChance:0.03,oceanChance:0.07,shipwreckChance:0.10,ruinedChance:0,outpostChance:0.08,bastionChance:0,strongholdRing:1408,rareBiomes:['Ice Spikes','Bamboo Jungle','Badlands']},
-  bedrock_1_21:{label:'Bedrock 1.21',villageChance:0.40,templeChance:0.16,mansionChance:0.05,oceanChance:0.11,shipwreckChance:0.18,ruinedChance:0.26,outpostChance:0.12,bastionChance:0,strongholdRing:1200,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle','Badlands']},
-  bedrock_1_20:{label:'Bedrock 1.20',villageChance:0.38,templeChance:0.15,mansionChance:0.05,oceanChance:0.10,shipwreckChance:0.17,ruinedChance:0.24,outpostChance:0.11,bastionChance:0,strongholdRing:1200,rareBiomes:['Cherry Grove','Mangrove Swamp','Ice Spikes','Bamboo Jungle']},
-  bedrock_1_19:{label:'Bedrock 1.19',villageChance:0.36,templeChance:0.14,mansionChance:0.04,oceanChance:0.10,shipwreckChance:0.16,ruinedChance:0.22,outpostChance:0.10,bastionChance:0,strongholdRing:1200,rareBiomes:['Mangrove Swamp','Ice Spikes','Bamboo Jungle']},
-  bedrock_1_18:{label:'Bedrock 1.18',villageChance:0.34,templeChance:0.13,mansionChance:0.04,oceanChance:0.09,shipwreckChance:0.14,ruinedChance:0.20,outpostChance:0.10,bastionChance:0,strongholdRing:1200,rareBiomes:['Ice Spikes','Bamboo Jungle']},
-};
+function getSavedKey() { try { return localStorage.getItem(STORAGE_KEY_API) || ''; } catch { return ''; } }
+function saveKey(k) { try { localStorage.setItem(STORAGE_KEY_API, k); } catch {} }
+function clearKey() { try { localStorage.removeItem(STORAGE_KEY_API); } catch {} }
+function getLocalAssets() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS) || '[]'); } catch { return []; } }
+function saveLocalAssets(arr) { try { localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(arr)); } catch {} }
 
-// ===================== STRUCTURE COLORS =====================
-const STRUCT_COLORS={village:'#4ade80',stronghold:'#a78bfa',temple:'#fbbf24',mansion:'#f87171',ocean:'#60a5fa',shipwreck:'#22d3ee',ruined:'#fb923c',outpost:'#ff6b6b',bastion:'#c4b5fd',biome:'#f472b6'};
-const STRUCT_ICONS={village:'V',stronghold:'S',temple:'T',mansion:'M',ocean:'O',shipwreck:'~',ruined:'P',outpost:'!',bastion:'B',biome:'*'};
-const STRUCT_NAMES={village:'Village',stronghold:'Stronghold',temple:'Desert Temple',mansion:'Woodland Mansion',ocean:'Ocean Monument',shipwreck:'Shipwreck',ruined:'Ruined Portal',outpost:'Pillager Outpost',bastion:'Bastion Remnant',biome:'Rare Biome'};
+// ── State ──
+let apiKey = '';
+let assets = []; // {id, name, assetType, thumbnail, createdByUs, created}
+let localAssets = getLocalAssets(); // assets we uploaded
+let createModalOpen = false;
 
-// ===================== SEED ANALYSIS =====================
-function analyzeSeed(seed, threshold, ver){
-  const cfg=VERSIONS[ver]||VERSIONS.java_1_21_4;
-  const rng=getSeedRng(seed);
-  const features=[];
-  const r=()=>rng();
-  const jitter=(range)=>Math.floor((r()-0.5)*range*2);
+// ──────────────────────────────────────────────
+// SCREEN 1: API Key entry
+// ──────────────────────────────────────────────
+function renderScreen1() {
+  const saved = getSavedKey();
+  const root = $('root');
+  root.innerHTML = '';
 
-  // Village
-  for(let i=0;i<3;i++){
-    const x=jitter(threshold*1.2), z=jitter(threshold*1.2);
-    if(r()<cfg.villageChance&&Math.hypot(x,z)<threshold*1.3){
-      features.push({type:'village',x,z,dist:Math.round(Math.hypot(x,z))});
-      break;
-    }
-  }
-  // Stronghold
-  const sAngle=r()*Math.PI*2;
-  const sDist=cfg.strongholdRing+(r()-0.5)*400;
-  features.push({type:'stronghold',x:Math.round(Math.cos(sAngle)*sDist),z:Math.round(Math.sin(sAngle)*sDist),dist:Math.round(sDist)});
-  // Temple
-  if(r()<cfg.templeChance){const x=jitter(threshold),z=jitter(threshold);features.push({type:'temple',x,z,dist:Math.round(Math.hypot(x,z))})}
-  // Mansion
-  if(r()<cfg.mansionChance){const d=2000+r()*3000;const a=r()*Math.PI*2;features.push({type:'mansion',x:Math.round(Math.cos(a)*d),z:Math.round(Math.sin(a)*d),dist:Math.round(d)})}
-  // Ocean Monument
-  if(r()<cfg.oceanChance){const x=jitter(threshold*1.5),z=jitter(threshold*1.5);features.push({type:'ocean',x,z,dist:Math.round(Math.hypot(x,z))})}
-  // Shipwreck
-  if(r()<cfg.shipwreckChance){const x=jitter(threshold*0.8),z=jitter(threshold*0.8);features.push({type:'shipwreck',x,z,dist:Math.round(Math.hypot(x,z))})}
-  // Ruined Portal
-  if(cfg.ruinedChance>0&&r()<cfg.ruinedChance){const x=jitter(threshold*0.6),z=jitter(threshold*0.6);features.push({type:'ruined',x,z,dist:Math.round(Math.hypot(x,z))})}
-  // Outpost
-  if(r()<cfg.outpostChance){const x=jitter(threshold),z=jitter(threshold);features.push({type:'outpost',x,z,dist:Math.round(Math.hypot(x,z))})}
-  // Bastion
-  if(cfg.bastionChance>0&&r()<cfg.bastionChance){const x=jitter(1000),z=jitter(1000);features.push({type:'bastion',x,z,dist:Math.round(Math.hypot(x,z))})}
-  // Rare Biome
-  if(r()<0.08&&cfg.rareBiomes.length>0){const x=jitter(threshold*0.9),z=jitter(threshold*0.9);const b=cfg.rareBiomes[Math.floor(r()*cfg.rareBiomes.length)];features.push({type:'biome',x,z,dist:Math.round(Math.hypot(x,z)),label:b})}
+  const screen = el('div', { class: 'screen-api' });
 
-  return features;
-}
+  const logoArea = el('div', { class: 'logo-area' });
+  const logoIcon = el('div', { class: 'logo-icon' }, '🎮');
+  const logoTitle = el('div', { class: 'logo-title' }, 'ASSET FORGE');
+  const logoSub = el('div', { class: 'logo-sub' }, 'ROBLOX CREATOR TOOLKIT');
+  logoArea.append(logoIcon, logoTitle, logoSub);
 
-function scoreFeatures(features,threshold){
-  let score=0;
-  for(const f of features){
-    let base=10;
-    if(f.type==='mansion')base=40;
-    else if(f.type==='stronghold')base=20;
-    else if(f.type==='village')base=15;
-    const proximity=Math.max(0,1-f.dist/(threshold*1.5));
-    score+=Math.round(base*(1+proximity));
-  }
-  return score;
-}
+  const card = el('div', { class: 'api-card' });
+  const h2 = el('h2', {}, 'Connect your API Key');
+  const desc = el('p', {}, 'Enter your Roblox Open Cloud API key to get started. You can generate one in the Roblox Creator Hub under API Keys.');
 
-// ===================== SEARCH ENGINE =====================
-let running=false,found=0,checked=0,startTime=0,searchTimer=null;
-let allResults=[];
-
-document.querySelectorAll('.feat-pill input').forEach(cb=>{
-  cb.addEventListener('change',()=>{
-    cb.closest('.feat-pill').classList.toggle('active',cb.checked);
+  const label = el('label', { class: 'field-label', for: 'apiKeyInput' }, 'API KEY');
+  const inputRow = el('div', { style: 'position:relative' });
+  const input = el('input', {
+    type: 'password', id: 'apiKeyInput', class: 'api-input',
+    placeholder: 'paste your Roblox Open Cloud API key…',
+    value: saved,
+    autocomplete: 'off'
   });
-});
+  inputRow.append(input);
 
-function getRequiredFeatures(){
-  return [...document.querySelectorAll('.feat-pill input:checked')].map(c=>c.value);
-}
+  const statusEl = el('div', { style: 'min-height:1.4rem; margin-top:0.5rem;' });
 
-function startSearch(){
-  const manual=document.getElementById('manualSeed').value.trim();
-  if(manual){checkSingleSeed(manual);return;}
-  running=true;
-  found=0;checked=0;
-  startTime=Date.now();
-  document.getElementById('startBtn').style.display='none';
-  document.getElementById('stopBtn').style.display='';
-  document.getElementById('sStatus').textContent='Searching';
-  document.getElementById('results').innerHTML='';
-  allResults=[];
-  updateResultCount();
-  runBatch();
-}
+  // Toggle row
+  const toggleRow = el('label', { class: 'toggle-row' });
+  const toggleWrap = el('span', { class: 'toggle' });
+  const toggleInput = el('input', { type: 'checkbox', id: 'saveToggle' });
+  if (saved) toggleInput.checked = true;
+  const toggleTrack = el('span', { class: 'toggle-track' });
+  const thumb = el('span', { class: 'toggle-thumb' });
+  toggleTrack.appendChild(thumb);
+  toggleWrap.append(toggleInput, toggleTrack);
+  const toggleLabel = el('span', { class: 'toggle-label' });
+  toggleLabel.innerHTML = '<span>Remember</span> this key on next visit';
+  toggleRow.append(toggleWrap, toggleLabel);
 
-function stopSearch(){
-  running=false;
-  if(searchTimer)clearTimeout(searchTimer);
-  document.getElementById('startBtn').style.display='';
-  document.getElementById('stopBtn').style.display='none';
-  document.getElementById('sStatus').textContent='Stopped';
-  document.getElementById('progLabel').textContent='Stopped at '+checked+' seeds';
-}
+  const submitBtn = el('button', { class: 'btn btn-primary', id: 'connectBtn' }, '');
+  const spinnerEl = el('span', { class: 'spinner', style: 'display:none', id: 'apiSpinner' });
+  submitBtn.append(spinnerEl);
+  submitBtn.appendChild(document.createTextNode(' Connect & Validate'));
 
-function runBatch(){
-  if(!running)return;
-  const total=parseInt(document.getElementById('batchSize').value);
-  const threshold=parseInt(document.getElementById('threshold').value)||500;
-  const ver=document.getElementById('version').value;
-  const required=getRequiredFeatures();
-  const minFeat=parseInt(document.getElementById('minFeatures').value)||1;
-  const seedStart=parseInt(document.getElementById('seedStart').value)||0;
-  const batchPer=200;
-  const elapsed=()=>((Date.now()-startTime)/1000).toFixed(1);
-  const rate=()=>checked>0?Math.round(checked/((Date.now()-startTime)/1000)):0;
-
-  function tick(){
-    if(!running||checked>=total){
-      if(checked>=total)finishSearch();
+  submitBtn.addEventListener('click', async () => {
+    const key = input.value.trim();
+    if (!key) {
+      showStatus(statusEl, 'error', '⚠ Please paste an API key first.');
+      input.className = 'api-input error';
       return;
     }
-    const end=Math.min(checked+batchPer,total);
-    for(let i=checked;i<end;i++){
-      const seed=seedStart+i+(Math.floor(Math.random()*1000000)-500000);
-      const features=analyzeSeed(seed,threshold,ver);
-      const inRange=features.filter(f=>f.dist<=threshold||(f.type==='stronghold'));
-      const satisfies=required.length===0||required.every(r=>inRange.some(f=>f.type===r));
-      const hasMin=inRange.length>=minFeat;
-      if(satisfies&&hasMin){
-        found++;
-        const score=scoreFeatures(inRange,threshold);
-        allResults.push({seed,features:inRange,score});
-        addResult(seed,inRange,score,found);
-      }
+    setLoading(true);
+    showStatus(statusEl, '', '⏳ Validating key with Roblox API…');
+    const valid = await validateApiKey(key);
+    setLoading(false);
+    if (valid) {
+      input.className = 'api-input valid';
+      showStatus(statusEl, 'success', '✓ Key validated! Loading dashboard…');
+      if (toggleInput.checked) saveKey(key); else clearKey();
+      apiKey = key;
+      setTimeout(() => renderScreen2(), 700);
+    } else {
+      input.className = 'api-input error';
+      showStatus(statusEl, 'error', '✗ Invalid key or insufficient permissions. Make sure it has Asset read/write access.');
     }
-    checked=end;
-    const pct=(checked/total*100).toFixed(1);
-    document.getElementById('prog').style.width=pct+'%';
-    document.getElementById('progPct').textContent=pct+'%';
-    document.getElementById('progLabel').textContent=`Checking seed ${checked.toLocaleString()} of ${total.toLocaleString()}`;
-    document.getElementById('sChecked').textContent=checked.toLocaleString();
-    document.getElementById('sFound').textContent=found.toLocaleString();
-    document.getElementById('sRate').textContent=rate()+'/s';
-    document.getElementById('sElapsed').textContent=elapsed()+'s';
-    if(found>0)document.getElementById('sBest').textContent=Math.max(...allResults.map(r=>r.score));
-    updateResultCount();
-    searchTimer=setTimeout(tick,0);
+  });
+
+  function setLoading(on) {
+    submitBtn.disabled = on;
+    $('apiSpinner').style.display = on ? 'inline-block' : 'none';
   }
-  tick();
+
+  card.append(h2, desc, label, inputRow, statusEl, toggleRow, submitBtn);
+  screen.append(logoArea, card);
+  root.appendChild(screen);
+  if (saved) input.focus();
 }
 
-function checkSingleSeed(seedStr){
-  const seed=parseInt(seedStr)||0;
-  const threshold=parseInt(document.getElementById('threshold').value)||500;
-  const ver=document.getElementById('version').value;
-  const features=analyzeSeed(seed,threshold,ver);
-  const score=scoreFeatures(features,threshold);
-  document.getElementById('results').innerHTML='';
-  allResults=[{seed,features,score}];
-  addResult(seed,features,score,1);
-  document.getElementById('sFound').textContent='1';
-  document.getElementById('sChecked').textContent='1';
-  updateResultCount();
+function showStatus(el, type, msg) {
+  el.className = type === 'error' ? 'error-msg' : type === 'success' ? 'valid-msg' : '';
+  el.textContent = msg;
 }
 
-function finishSearch(){
-  running=false;
-  document.getElementById('startBtn').style.display='';
-  document.getElementById('stopBtn').style.display='none';
-  document.getElementById('prog').style.width='100%';
-  document.getElementById('progLabel').textContent='Search complete — '+found+' seeds found';
-  document.getElementById('progPct').textContent='100%';
-  document.getElementById('sStatus').textContent='Done';
-  sortResults();
-}
-
-function addResult(seed,features,score,rank){
-  const container=document.getElementById('results');
-  const empty=container.querySelector('.empty-state');
-  if(empty)empty.remove();
-
-  const gold=score>80;
-  const div=document.createElement('div');
-  div.className='seed-card'+(gold?' gold':'');
-  div.dataset.seed=seed;
-  div.dataset.score=score;
-
-  const tags=features.map(f=>{
-    const name=f.label||STRUCT_NAMES[f.type]||f.type;
-    return `<span class="stag ${f.type}" title="${f.dist} blocks from spawn">${STRUCT_ICONS[f.type]||'?'} ${name} (${f.dist}m)</span>`;
-  }).join('');
-
-  div.innerHTML=`
-    <div class="seed-rank">#${rank}</div>
-    <div class="seed-main">
-      <div class="seed-num">${seed}</div>
-      <div class="seed-features">${tags}</div>
-    </div>
-    <div class="seed-actions">
-      <button class="seed-btn view" onclick="openInViewer('${seed}')">View Map ↗</button>
-      <button class="seed-btn" onclick="copySeed('${seed}',this)">Copy Seed</button>
-      <div class="seed-score">Score: ${score}</div>
-    </div>`;
-  container.insertBefore(div,container.firstChild);
-}
-
-function copySeed(seed,btn){
-  navigator.clipboard.writeText(seed).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy Seed',1500);});
-}
-function openInViewer(seed){
-  document.getElementById('viewerSeed').value=seed;
-  switchTab('viewer');
-  renderMap();
-}
-function clearResults(){
-  document.getElementById('results').innerHTML='<div class="empty-state"><div class="icon">🌍</div><p>Configure your filters above and click <strong>Search Seeds</strong><br>Results will appear here as seeds are found</p></div>';
-  allResults=[];found=0;checked=0;
-  document.getElementById('sChecked').textContent='0';
-  document.getElementById('sFound').textContent='0';
-  document.getElementById('sRate').textContent='—/s';
-  document.getElementById('sElapsed').textContent='0s';
-  document.getElementById('sBest').textContent='—';
-  document.getElementById('prog').style.width='0%';
-  document.getElementById('progLabel').textContent='Ready';
-  document.getElementById('progPct').textContent='0%';
-  document.getElementById('sStatus').textContent='Idle';
-  updateResultCount();
-}
-function updateResultCount(){
-  document.getElementById('resultCount').textContent=`${allResults.length} seed${allResults.length!==1?'s':''} found`;
-}
-function sortResults(){
-  const by=document.getElementById('sortBy').value;
-  if(by==='found')return;
-  allResults.sort((a,b)=>{
-    if(by==='score')return b.score-a.score;
-    if(by==='count')return b.features.length-a.features.length;
-    if(by==='distance'){
-      const da=Math.min(...a.features.map(f=>f.dist));
-      const db=Math.min(...b.features.map(f=>f.dist));
-      return da-db;
-    }
-    return 0;
-  });
-  const container=document.getElementById('results');
-  container.innerHTML='';
-  allResults.forEach((r,i)=>addResult(r.seed,r.features,r.score,i+1));
-}
-function exportResults(){
-  let csv='Seed,Score,Features,Closest Distance\n';
-  allResults.forEach(r=>{
-    const closest=Math.min(...r.features.map(f=>f.dist));
-    const feats=r.features.map(f=>STRUCT_NAMES[f.type]).join(' | ');
-    csv+=`${r.seed},${r.score},"${feats}",${closest}\n`;
-  });
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='seedcraft_results.csv';
-  a.click();
-}
-
-// ===================== VIEWER =====================
-let mapCanvas,ctx,viewScale=1,viewOffX=0,viewOffY=0,isDragging=false,dragStartX,dragStartY,mapStructures=[],currentViewerSeed=null;
-
-function initMap(){
-  mapCanvas=document.getElementById('worldMap');
-  ctx=mapCanvas.getContext('2d');
-  const rect=mapCanvas.getBoundingClientRect();
-  mapCanvas.width=rect.width*devicePixelRatio||900;
-  mapCanvas.height=700*devicePixelRatio||700;
-  ctx.scale(devicePixelRatio,devicePixelRatio);
-
-  mapCanvas.addEventListener('mousedown',e=>{isDragging=true;dragStartX=e.clientX-viewOffX;dragStartY=e.clientY-viewOffY;mapCanvas.style.cursor='grabbing';});
-  mapCanvas.addEventListener('mousemove',e=>{
-    if(isDragging){viewOffX=e.clientX-dragStartX;viewOffY=e.clientY-dragStartY;redrawMap();}
-    const coords=screenToWorld(e.offsetX,e.offsetY);
-    document.getElementById('mapCoords').textContent=`X: ${Math.round(coords.x)}  Z: ${Math.round(coords.z)}`;
-    checkHover(e.offsetX,e.offsetY);
-  });
-  mapCanvas.addEventListener('mouseup',()=>{isDragging=false;mapCanvas.style.cursor='grab';});
-  mapCanvas.addEventListener('mouseleave',()=>{isDragging=false;mapCanvas.style.cursor='grab';document.getElementById('mapTooltip').style.display='none';});
-  mapCanvas.addEventListener('wheel',e=>{
-    e.preventDefault();
-    const factor=e.deltaY<0?1.15:0.87;
-    const cx=e.offsetX,cy=e.offsetY;
-    viewOffX=(viewOffX-cx)*factor+cx;
-    viewOffY=(viewOffY-cy)*factor+cy;
-    viewScale*=factor;
-    redrawMap();
-  });
-  mapCanvas.addEventListener('click',e=>{
-    const found=hitTest(e.offsetX,e.offsetY);
-    if(found)showStructInfo(found);
-  });
-}
-
-function worldToScreen(wx,wz){
-  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
-  return{x:cw/2+viewOffX+wx*viewScale,y:ch/2+viewOffY+wz*viewScale};
-}
-function screenToWorld(sx,sy){
-  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
-  return{x:(sx-cw/2-viewOffX)/viewScale,z:(sy-ch/2-viewOffY)/viewScale};
-}
-
-function generateBiomeMap(seed){
-  const rng=getSeedRng(seed+777);
-  const biomes=[];
-  const count=30;
-  const biomeColors=[
-    '#1a4a2e','#2d6a3a','#3d8b4a','#1a6b4a',
-    '#a0522d','#c4a35a','#d4b86a','#8b7355',
-    '#1a3a5c','#2a5c8a','#3a7ab8','#4a9adc',
-    '#2d4a1a','#3d6a2a','#4d8a3a','#5daa4a',
-    '#6b4a2a','#8b6a3a','#a08050','#c4a870',
-    '#e8e8d0','#d0d0b8','#b8b8a0','#e0e8f0',
-    '#4a1a4a','#6a2a6a','#8a4a8a','#2a4a1a',
-  ];
-  for(let i=0;i<count;i++){
-    biomes.push({
-      x:(rng()-0.5)*8000,z:(rng()-0.5)*8000,
-      color:biomeColors[Math.floor(rng()*biomeColors.length)],
-      radius:300+rng()*700
+// ── Roblox API: validate key by listing assets ──
+async function validateApiKey(key) {
+  try {
+    // Try fetching the user's creator info via Open Cloud
+    // We'll call the Assets API - list assets. If 401/403 → invalid.
+    const res = await fetch('https://apis.roblox.com/assets/v1/assets?assetType=Decal&limit=1', {
+      headers: { 'x-api-key': key }
     });
+    // 200 or 404 (no assets) = valid key; 401/403 = invalid
+    return res.status !== 401 && res.status !== 403;
+  } catch {
+    // Network issue - try a second endpoint
+    try {
+      const res2 = await fetch('https://apis.roblox.com/assets/v1/assets?assetType=Image&limit=1', {
+        headers: { 'x-api-key': key }
+      });
+      return res2.status !== 401 && res2.status !== 403;
+    } catch { return false; }
   }
-  return biomes;
 }
 
-function renderMap(){
-  const seedInput=document.getElementById('viewerSeed').value.trim();
-  if(!seedInput){alert('Enter a seed first!');return;}
-  currentViewerSeed=parseInt(seedInput)||0;
-  const ver=document.getElementById('viewerVersion').value;
-  const threshold=parseInt(document.getElementById('threshold')?.value)||500;
-  mapStructures=analyzeSeed(currentViewerSeed,threshold,ver);
-  // Add more structures for the wider map
-  const rng=getSeedRng(currentViewerSeed);
-  const cfg=VERSIONS[ver]||VERSIONS.java_1_21_4;
-  for(let i=0;i<8;i++){
-    if(rng()<cfg.villageChance){const x=(rng()-0.5)*12000,z=(rng()-0.5)*12000;mapStructures.push({type:'village',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
-    if(rng()<cfg.templeChance){const x=(rng()-0.5)*10000,z=(rng()-0.5)*10000;mapStructures.push({type:'temple',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
-    if(rng()<cfg.oceanChance){const x=(rng()-0.5)*10000,z=(rng()-0.5)*10000;mapStructures.push({type:'ocean',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
-    if(rng()<cfg.shipwreckChance){const x=(rng()-0.5)*9000,z=(rng()-0.5)*9000;mapStructures.push({type:'shipwreck',x:Math.round(x),z:Math.round(z),dist:Math.round(Math.hypot(x,z))});}
-    if(rng()<0.15){const a=rng()*Math.PI*2,d=cfg.strongholdRing*2+(i*1000);mapStructures.push({type:'stronghold',x:Math.round(Math.cos(a)*d),z:Math.round(Math.sin(a)*d),dist:Math.round(d)});}
-  }
-  if(!mapCanvas)initMap();
-  resetView();
-  redrawMap();
+// ──────────────────────────────────────────────
+// SCREEN 2: Dashboard
+// ──────────────────────────────────────────────
+async function renderScreen2() {
+  const root = $('root');
+  root.innerHTML = '';
+
+  const screen = el('div', { class: 'screen-dashboard' });
+
+  // Topbar
+  const topbar = el('div', { class: 'topbar' });
+  const tbLeft = el('div', { class: 'topbar-left' });
+  const tbLogo = el('div', { class: 'topbar-logo' }, '🎮');
+  const tbTitle = el('div', { class: 'topbar-title' }, 'ASSET FORGE');
+  tbLeft.append(tbLogo, tbTitle);
+
+  const tbRight = el('div', { class: 'topbar-right' });
+  const keyBadge = el('div', { class: 'key-badge' });
+  const keyDot = el('span', { class: 'key-dot' });
+  keyBadge.append(keyDot, document.createTextNode(maskKey(apiKey)));
+
+  const createBtn = el('button', { class: 'btn btn-create', id: 'openCreateBtn' }, '＋ New Asset');
+  createBtn.addEventListener('click', () => openCreateModal());
+
+  const signOutBtn = el('button', { class: 'sign-out-btn' }, 'Sign Out');
+  signOutBtn.addEventListener('click', () => { apiKey = ''; renderScreen1(); });
+
+  tbRight.append(keyBadge, createBtn, signOutBtn);
+  topbar.append(tbLeft, tbRight);
+
+  // Main
+  const main = el('div', { class: 'main' });
+
+  const secHeader = el('div', { class: 'section-header' });
+  const secTitle = el('div', { class: 'section-title' }, 'Your Assets');
+  const legend = el('div', { class: 'legend' });
+  legend.innerHTML = `
+    <span class="legend-item"><span class="legend-dot" style="background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);display:inline-block"></span> Created here</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--yellow);border-radius:50%;box-shadow:0 0 6px var(--yellow);display:inline-block"></span> External</span>
+  `;
+  secHeader.append(secTitle, legend);
+
+  const groupbox = el('div', { class: 'groupbox', id: 'assetGroupbox' });
+  const grid = el('div', { class: 'asset-grid', id: 'assetGrid' });
+  const empty = el('div', { class: 'empty-state', id: 'emptyState' });
+  empty.innerHTML = '<div class="empty-state-icon">📦</div><p>No assets yet — create your first one!</p>';
+  groupbox.append(grid, empty);
+  main.append(secHeader, groupbox);
+  screen.append(topbar, main);
+  root.appendChild(screen);
+
+  // Load assets
+  await loadAssets();
+  renderGrid();
 }
 
-function redrawMap(){
-  if(!mapCanvas)return;
-  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
-  ctx.clearRect(0,0,mapCanvas.width,mapCanvas.height);
+function maskKey(k) {
+  if (!k) return '—';
+  return k.slice(0, 6) + '…' + k.slice(-4);
+}
 
-  // Background biome colors
-  if(currentViewerSeed!==null){
-    const biomes=generateBiomeMap(currentViewerSeed);
-    biomes.forEach(b=>{
-      const pos=worldToScreen(b.x,b.z);
-      const r=b.radius*viewScale;
-      const grad=ctx.createRadialGradient(pos.x,pos.y,0,pos.x,pos.y,r);
-      grad.addColorStop(0,b.color+'bb');
-      grad.addColorStop(1,b.color+'00');
-      ctx.fillStyle=grad;
-      ctx.beginPath();ctx.arc(pos.x,pos.y,r,0,Math.PI*2);ctx.fill();
+async function loadAssets() {
+  assets = [];
+  try {
+    const res = await fetch('https://apis.roblox.com/assets/v1/assets?limit=50', {
+      headers: { 'x-api-key': apiKey }
     });
-  }
-
-  // Background ocean
-  ctx.fillStyle='#0a1a2a';
-  const originScreen=worldToScreen(0,0);
-  ctx.fillStyle='rgba(10,26,42,0.3)';
-  ctx.fillRect(0,0,cw,ch);
-
-  // Grid
-  if(document.getElementById('tog-grid')?.checked){
-    ctx.strokeStyle='rgba(255,255,255,0.06)';
-    ctx.lineWidth=0.5;
-    const chunkPx=16*viewScale;
-    if(chunkPx>8){
-      const startX=viewOffX%(chunkPx)+cw/2%chunkPx;
-      const startZ=viewOffY%(chunkPx)+ch/2%chunkPx;
-      for(let x=startX-chunkPx*2;x<cw+chunkPx;x+=chunkPx){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ch);ctx.stroke();}
-      for(let z=startZ-chunkPx*2;z<ch+chunkPx;z+=chunkPx){ctx.beginPath();ctx.moveTo(0,z);ctx.lineTo(cw,z);ctx.stroke();}
+    if (res.ok) {
+      const data = await res.json();
+      const list = data.assets || data.data || [];
+      const localIds = new Set(localAssets.map(a => String(a.id)));
+      assets = list.map(a => ({
+        id: String(a.assetId || a.id || ''),
+        name: a.displayName || a.name || 'Unnamed',
+        assetType: a.assetType || 'Unknown',
+        thumbnail: a.thumbnailUrl || null,
+        createdByUs: localIds.has(String(a.assetId || a.id || '')),
+        preview: null
+      }));
     }
-    // Region grid
-    ctx.strokeStyle='rgba(255,255,255,0.12)';
-    const regPx=512*viewScale;
-    if(regPx>20){
-      const srX=viewOffX%(regPx)+cw/2%regPx;
-      const srZ=viewOffY%(regPx)+ch/2%regPx;
-      for(let x=srX-regPx*2;x<cw+regPx;x+=regPx){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ch);ctx.stroke();}
-      for(let z=srZ-regPx*2;z<ch+regPx;z+=regPx){ctx.beginPath();ctx.moveTo(0,z);ctx.lineTo(cw,z);ctx.stroke();}
+  } catch {}
+
+  // Merge local assets not returned by the API
+  for (const la of localAssets) {
+    if (!assets.find(a => a.id === String(la.id))) {
+      assets.unshift({ ...la, createdByUs: true });
     }
   }
-
-  // Spawn ring
-  const sp=worldToScreen(0,0);
-  ctx.strokeStyle='rgba(255,255,255,0.15)';
-  ctx.setLineDash([4,4]);
-  ctx.lineWidth=1;
-  [100,250,500,1000].forEach(r=>{
-    const pr=r*viewScale;
-    ctx.beginPath();ctx.arc(sp.x,sp.y,pr,0,Math.PI*2);ctx.stroke();
-    if(pr>20){ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='10px monospace';ctx.fillText(r+'m',sp.x+pr+3,sp.y);}
-  });
-  ctx.setLineDash([]);
-
-  // Structures
-  const typeOrder=['biome','shipwreck','ruined','temple','ocean','mansion','outpost','bastion','village','stronghold'];
-  const sorted=[...mapStructures].sort((a,b)=>typeOrder.indexOf(a.type)-typeOrder.indexOf(b.type));
-  sorted.forEach(s=>{
-    const togId='tog-'+s.type;
-    const tog=document.getElementById(togId);
-    if(tog&&!tog.checked)return;
-    drawStructure(s);
-  });
-
-  // Spawn marker
-  ctx.fillStyle='#ffffff';
-  ctx.strokeStyle='#000000';
-  ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(sp.x,sp.y,6,0,Math.PI*2);ctx.fill();ctx.stroke();
-  ctx.fillStyle='#000000';
-  ctx.font='bold 9px monospace';
-  ctx.textAlign='center';
-  ctx.fillText('0,0',sp.x,sp.y+3);
-  ctx.textAlign='left';
 }
 
-function drawStructure(s){
-  const pos=worldToScreen(s.x,s.z);
-  const color=STRUCT_COLORS[s.type]||'#fff';
-  const size=Math.max(5,Math.min(16,8*viewScale));
-
-  ctx.save();
-  ctx.shadowColor=color;
-  ctx.shadowBlur=8;
-  ctx.fillStyle=color+'dd';
-  ctx.strokeStyle=color;
-  ctx.lineWidth=1.5;
-
-  if(s.type==='stronghold'){
-    // Star shape
-    const spikes=6,outerR=size*1.1,innerR=size*0.5;
-    ctx.beginPath();
-    for(let i=0;i<spikes*2;i++){const r=i%2===0?outerR:innerR;const a=(i*Math.PI/spikes)-Math.PI/2;ctx.lineTo(pos.x+Math.cos(a)*r,pos.y+Math.sin(a)*r);}
-    ctx.closePath();ctx.fill();ctx.stroke();
-  } else if(s.type==='mansion'||s.type==='outpost'){
-    // Diamond
-    ctx.beginPath();ctx.moveTo(pos.x,pos.y-size);ctx.lineTo(pos.x+size,pos.y);ctx.lineTo(pos.x,pos.y+size);ctx.lineTo(pos.x-size,pos.y);ctx.closePath();
-    ctx.fill();ctx.stroke();
+function renderGrid() {
+  const grid = $('assetGrid');
+  const empty = $('emptyState');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const all = [...assets];
+  if (all.length === 0) {
+    empty.style.display = 'block';
   } else {
-    // Circle
-    ctx.beginPath();ctx.arc(pos.x,pos.y,size*0.8,0,Math.PI*2);ctx.fill();ctx.stroke();
-  }
-  ctx.restore();
-
-  if(viewScale>0.04){
-    ctx.fillStyle=color;
-    ctx.font=`bold ${Math.min(12,Math.max(8,size))}px monospace`;
-    ctx.textAlign='center';
-    ctx.fillText(STRUCT_ICONS[s.type]||'?',pos.x,pos.y+(size*0.35));
-    ctx.textAlign='left';
-    if(viewScale>0.08){
-      ctx.fillStyle='rgba(255,255,255,0.7)';
-      ctx.font='10px monospace';
-      ctx.fillText(`${s.x},${s.z}`,pos.x+size+4,pos.y+4);
-    }
+    empty.style.display = 'none';
+    for (const asset of all) grid.appendChild(makeAssetCard(asset));
   }
 }
 
-function hitTest(mx,my){
-  for(const s of mapStructures){
-    const pos=worldToScreen(s.x,s.z);
-    const dx=mx-pos.x,dy=my-pos.y;
-    if(Math.hypot(dx,dy)<16)return s;
-  }
-  return null;
-}
-function checkHover(mx,my){
-  const s=hitTest(mx,my);
-  const tt=document.getElementById('mapTooltip');
-  if(s){
-    tt.style.display='block';
-    tt.style.left=(mx+16)+'px';
-    tt.style.top=(my-8)+'px';
-    tt.innerHTML=`<strong>${STRUCT_NAMES[s.type]||s.type}</strong>X: ${s.x}<br>Z: ${s.z}<br>Dist: ${s.dist}m from spawn${s.label?'<br>'+s.label:''}`;
+function makeAssetCard(asset) {
+  const card = el('div', { class: 'asset-card' });
+
+  const preview = el('div', { class: 'asset-preview' });
+  const badge = el('span', { class: 'asset-badge ' + (asset.createdByUs ? 'badge-green' : 'badge-yellow') });
+  preview.appendChild(badge);
+
+  if (asset.svgData) {
+    preview.innerHTML += asset.svgData;
+    preview.appendChild(badge);
+  } else if (asset.pngData || asset.thumbnail) {
+    const img = el('img', { src: asset.pngData || asset.thumbnail, alt: asset.name });
+    preview.appendChild(img);
+    preview.appendChild(badge);
   } else {
-    tt.style.display='none';
+    const placeholder = el('div', { class: 'asset-preview-placeholder' }, '🖼');
+    preview.appendChild(placeholder);
+    preview.appendChild(badge);
+  }
+
+  const name = el('div', { class: 'asset-name' }, asset.name);
+  const idEl = el('div', { class: 'asset-id' }, asset.id ? `ID: ${asset.id}` : 'Pending…');
+  const typeTag = el('div', { class: 'asset-type-tag' }, asset.assetType || 'Image');
+
+  card.append(preview, name, idEl, typeTag);
+  return card;
+}
+
+// ──────────────────────────────────────────────
+// CREATE MODAL
+// ──────────────────────────────────────────────
+let modalState = {
+  name: '', assetFormat: 'svg', svgPaste: '', pngPaste: '',
+  svgFile: null, pngFile: null, inputMode: 'paste', status: '', statusType: '', creating: false
+};
+
+function openCreateModal() {
+  modalState = { name: '', assetFormat: 'svg', svgPaste: '', pngPaste: '', svgFile: null, pngFile: null, inputMode: 'paste', status: '', statusType: '', creating: false };
+  renderModal();
+}
+
+function renderModal() {
+  // Remove existing
+  const existing = $('createModalOverlay');
+  if (existing) existing.remove();
+
+  const overlay = el('div', { class: 'modal-overlay', id: 'createModalOverlay' });
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+  const modal = el('div', { class: 'modal' });
+
+  // Header
+  const header = el('div', { class: 'modal-header' });
+  const h3 = el('h3', {}, '✦ Create New Asset');
+  const closeBtn = el('button', { class: 'btn btn-ghost', style: 'padding:0.4rem 0.8rem;font-size:1rem;' }, '✕');
+  closeBtn.addEventListener('click', closeModal);
+  header.append(h3, closeBtn);
+
+  // Body
+  const body = el('div', { class: 'modal-body' });
+
+  // Name field
+  const nameField = el('div', { class: 'field' });
+  const nameLabel = el('label', { class: 'field-label' }, 'Asset Name');
+  const nameInput = el('input', {
+    class: 'api-input', type: 'text', placeholder: 'e.g. My Cool Decal',
+    value: modalState.name
+  });
+  nameInput.addEventListener('input', e => { modalState.name = e.target.value; });
+  nameField.append(nameLabel, nameInput);
+
+  // Format tabs
+  const formatField = el('div', { class: 'field' });
+  const formatLabel = el('label', { class: 'field-label' }, 'Asset Type');
+  const tabRow = el('div', { class: 'tab-row' });
+  for (const fmt of ['svg', 'png']) {
+    const tb = el('button', { class: 'tab-btn' + (modalState.assetFormat === fmt ? ' active' : '') }, fmt.toUpperCase());
+    tb.addEventListener('click', () => { modalState.assetFormat = fmt; rerenderModalBody(); });
+    tabRow.appendChild(tb);
+  }
+  formatField.append(formatLabel, tabRow);
+
+  // Input mode tabs
+  const modeField = el('div', { class: 'field' });
+  const modeLabel = el('label', { class: 'field-label' }, 'Input Method');
+  const modeRow = el('div', { class: 'tab-row' });
+  for (const m of ['paste', 'upload']) {
+    const tb = el('button', { class: 'tab-btn' + (modalState.inputMode === m ? ' active' : '') }, m === 'paste' ? '📋 Paste' : '📁 Upload File');
+    tb.addEventListener('click', () => { modalState.inputMode = m; rerenderModalBody(); });
+    modeRow.appendChild(tb);
+  }
+  modeField.append(modeLabel, modeRow);
+
+  // Content area
+  const contentField = el('div', { class: 'field', id: 'modalContentField' });
+  body.append(nameField, formatField, modeField, contentField);
+  renderContentField(contentField);
+
+  // Status
+  if (modalState.status) {
+    const statusBar = el('div', { class: `status-bar ${modalState.statusType === 'error' ? 'error' : modalState.statusType === 'success' ? 'success' : ''}` }, modalState.status);
+    body.appendChild(statusBar);
+  }
+
+  // Footer
+  const footer = el('div', { class: 'modal-footer' });
+  const cancelBtn = el('button', { class: 'btn btn-ghost' }, 'Cancel');
+  cancelBtn.addEventListener('click', closeModal);
+  const createBtn = el('button', { class: 'btn btn-primary', style: 'width:auto;min-width:140px;', id: 'modalCreateBtn' }, '');
+  if (modalState.creating) {
+    const sp = el('span', { class: 'spinner' });
+    createBtn.appendChild(sp);
+    createBtn.appendChild(document.createTextNode(' Creating…'));
+    createBtn.disabled = true;
+  } else {
+    createBtn.textContent = '✦ Create Asset';
+  }
+  createBtn.addEventListener('click', handleCreate);
+  footer.append(cancelBtn, createBtn);
+
+  modal.append(header, body, footer);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+function renderContentField(container) {
+  container.innerHTML = '';
+  const label = el('label', { class: 'field-label' }, `${modalState.assetFormat.toUpperCase()} Data`);
+  container.appendChild(label);
+
+  if (modalState.inputMode === 'paste') {
+    const ta = el('textarea', {
+      class: 'paste-area',
+      placeholder: modalState.assetFormat === 'svg'
+        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">…</svg>'
+        : 'Paste base64 PNG data or a data:image/png;base64,… URL'
+    });
+    ta.value = modalState.assetFormat === 'svg' ? modalState.svgPaste : modalState.pngPaste;
+    ta.addEventListener('input', e => {
+      if (modalState.assetFormat === 'svg') modalState.svgPaste = e.target.value;
+      else modalState.pngPaste = e.target.value;
+    });
+    container.appendChild(ta);
+  } else {
+    const zone = el('div', { class: 'upload-zone' });
+    const icon = el('div', { class: 'upload-icon' }, modalState.assetFormat === 'svg' ? '🖊' : '🖼');
+    const txt = el('div', {}, `Click to upload .${modalState.assetFormat} file`);
+    const fileInput = el('input', { type: 'file', accept: modalState.assetFormat === 'svg' ? '.svg,image/svg+xml' : '.png,image/png' });
+    const fileName = el('div', { class: 'upload-name' });
+
+    const currentFile = modalState.assetFormat === 'svg' ? modalState.svgFile : modalState.pngFile;
+    if (currentFile) fileName.textContent = currentFile.name;
+
+    fileInput.addEventListener('change', e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      if (modalState.assetFormat === 'svg') modalState.svgFile = f;
+      else modalState.pngFile = f;
+      fileName.textContent = f.name;
+    });
+
+    zone.addEventListener('click', () => fileInput.click());
+    zone.append(icon, txt, fileInput, fileName);
+    container.appendChild(zone);
   }
 }
-function showStructInfo(s){
-  document.getElementById('structInfo').innerHTML=`
-    <strong style="color:${STRUCT_COLORS[s.type]}">${STRUCT_NAMES[s.type]||s.type}</strong><br>
-    <div class="struct-list">
-      <div class="struct-entry"><span>X coordinate</span><span>${s.x}</span></div>
-      <div class="struct-entry"><span>Z coordinate</span><span>${s.z}</span></div>
-      <div class="struct-entry"><span>Distance from spawn</span><span>${s.dist} blocks</span></div>
-      ${s.label?`<div class="struct-entry"><span>Biome</span><span>${s.label}</span></div>`:''}
-    </div><br>
-    <span style="color:var(--text3);font-size:11px">Use /tp @s ${s.x} ~ ${s.z} to teleport</span>`;
+
+function rerenderModalBody() {
+  const existing = $('createModalOverlay');
+  if (existing) existing.remove();
+  renderModal();
 }
 
-function zoomMap(factor){
-  const cw=mapCanvas.width/devicePixelRatio,ch=mapCanvas.height/devicePixelRatio;
-  viewOffX=(viewOffX-cw/2)*factor+cw/2;
-  viewOffY=(viewOffY-ch/2)*factor+ch/2;
-  viewScale*=factor;
-  redrawMap();
-}
-function resetView(){viewScale=0.06;viewOffX=0;viewOffY=0;if(mapCanvas)redrawMap();}
-function loadQuickSeed(seed){document.getElementById('viewerSeed').value=seed;renderMap();}
-function loadRandomSeed(){const s=Math.floor(Math.random()*4294967296)-2147483648;document.getElementById('viewerSeed').value=s;renderMap();}
-function exportMapPNG(){
-  const a=document.createElement('a');
-  a.download='seedcraft_map.png';
-  a.href=mapCanvas.toDataURL('image/png');
-  a.click();
+function closeModal() {
+  const existing = $('createModalOverlay');
+  if (existing) existing.remove();
 }
 
-// ===================== TAB SWITCHING =====================
-function switchTab(tab){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+tab).classList.add('active');
-  event.currentTarget.classList.add('active');
-  if(tab==='viewer'&&!mapCanvas){setTimeout(initMap,50);}
+async function handleCreate() {
+  const name = modalState.name.trim();
+  if (!name) { modalState.status = '⚠ Please enter an asset name.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
+
+  let contentData = null;
+  let mimeType = '';
+
+  if (modalState.inputMode === 'paste') {
+    const raw = modalState.assetFormat === 'svg' ? modalState.svgPaste.trim() : modalState.pngPaste.trim();
+    if (!raw) { modalState.status = '⚠ Please paste some content.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
+    if (modalState.assetFormat === 'svg') {
+      mimeType = 'image/svg+xml';
+      contentData = new Blob([raw], { type: mimeType });
+    } else {
+      // Handle base64 or data URL
+      try {
+        let b64 = raw.includes(',') ? raw.split(',')[1] : raw;
+        const byteStr = atob(b64);
+        const arr = new Uint8Array(byteStr.length);
+        for (let i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
+        mimeType = 'image/png';
+        contentData = new Blob([arr], { type: mimeType });
+      } catch { modalState.status = '✗ Invalid PNG data — make sure it\'s valid base64.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
+    }
+  } else {
+    const file = modalState.assetFormat === 'svg' ? modalState.svgFile : modalState.pngFile;
+    if (!file) { modalState.status = '⚠ Please upload a file.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
+    mimeType = file.type || (modalState.assetFormat === 'svg' ? 'image/svg+xml' : 'image/png');
+    contentData = file;
+  }
+
+  modalState.creating = true;
+  modalState.status = '⏳ Uploading asset to Roblox…';
+  modalState.statusType = '';
+  rerenderModalBody();
+
+  // Read preview data
+  let previewDataUrl = null;
+  try {
+    previewDataUrl = await new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result);
+      fr.onerror = rej;
+      fr.readAsDataURL(contentData);
+    });
+  } catch {}
+
+  // Build multipart form
+  try {
+    const formData = new FormData();
+    const requestBody = {
+      assetType: modalState.assetFormat === 'svg' ? 'Decal' : 'Decal',
+      displayName: name,
+      description: `Created via Asset Forge`,
+      creationContext: { creator: { userId: 'me' } }
+    };
+    formData.append('request', new Blob([JSON.stringify(requestBody)], { type: 'application/json' }));
+    formData.append('fileContent', contentData, `asset.${modalState.assetFormat}`);
+
+    const res = await fetch('https://apis.roblox.com/assets/v1/assets', {
+      method: 'POST',
+      headers: { 'x-api-key': apiKey },
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      const newAsset = {
+        id: String(data.assetId || data.operationId || data.id || Date.now()),
+        name: name,
+        assetType: 'Decal',
+        thumbnail: previewDataUrl,
+        pngData: modalState.assetFormat === 'png' ? previewDataUrl : null,
+        svgData: modalState.assetFormat === 'svg' && (modalState.svgPaste || (modalState.svgFile ? '(file)' : null))
+          ? null : null,
+        previewDataUrl,
+        createdByUs: true,
+        created: Date.now()
+      };
+      localAssets.unshift(newAsset);
+      saveLocalAssets(localAssets);
+      assets.unshift(newAsset);
+
+      modalState.creating = false;
+      modalState.status = `✓ Asset "${name}" created! ID: ${newAsset.id}`;
+      modalState.statusType = 'success';
+      rerenderModalBody();
+      renderGrid();
+      setTimeout(closeModal, 2000);
+    } else {
+      const errMsg = data.message || data.error || JSON.stringify(data);
+      modalState.creating = false;
+      modalState.status = `✗ API error: ${errMsg}`;
+      modalState.statusType = 'error';
+      rerenderModalBody();
+    }
+  } catch (err) {
+    modalState.creating = false;
+    modalState.status = `✗ Network error: ${err.message}`;
+    modalState.statusType = 'error';
+    rerenderModalBody();
+  }
 }
 
-// Init
-window.addEventListener('load',()=>{
-  setTimeout(initMap,100);
-});
+// ── Boot ──
+const saved = getSavedKey();
+if (saved) {
+  // Show loading briefly then try auto-validate
+  const root = $('root');
+  root.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:1rem;">
+    <div style="width:48px;height:48px;border:3px solid #2a2a4a;border-top-color:#00e5ff;border-radius:50%;animation:spin 0.7s linear infinite;"></div>
+    <div style="font-family:'Rajdhani',sans-serif;color:#64748b;letter-spacing:2px;font-size:0.85rem;">VALIDATING SAVED KEY…</div>
+  </div>`;
+  validateApiKey(saved).then(valid => {
+    if (valid) { apiKey = saved; renderScreen2(); }
+    else { clearKey(); renderScreen1(); }
+  });
+} else {
+  renderScreen1();
+}
 </script>
 </body>
 </html>
