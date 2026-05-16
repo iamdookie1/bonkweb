@@ -290,7 +290,7 @@ async function doConnect() {
 
   if (r.ok) {
     kicls('ok'); setKS('s-ok','✓ Key accepted — loading dashboard…');
-    creatorInfo = { type: s1CreatorType, id: creatorId };
+    creatorInfo = { type: s1CreatorType, id: Number(creatorId) };
     saveCreator(creatorInfo);
     if (document.getElementById('st')?.checked) setSaved(key); else clearSaved();
     apiKey = key;
@@ -529,7 +529,7 @@ async function doCreate() {
       displayName: ms.name,
       description: 'Uploaded via Asset Forge',
       creationContext: {
-        creator: { [creatorKey]: creatorInfo?.id || '' }
+        creator: { [creatorKey]: Number(creatorInfo?.id) }
       }
     };
 
