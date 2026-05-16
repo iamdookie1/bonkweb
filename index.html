@@ -3,884 +3,473 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Roblox Asset Creator</title>
+<title>Asset Forge — Roblox Creator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0a0a0f;
-    --bg2: #10101a;
-    --bg3: #16162a;
-    --border: #2a2a4a;
-    --border2: #3a3a6a;
-    --accent: #00e5ff;
-    --accent2: #7c3aed;
-    --green: #22c55e;
-    --yellow: #eab308;
-    --red: #ef4444;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --card: #12121f;
+    --bg: #0a0a0f; --bg2: #10101a; --bg3: #16162a; --border: #2a2a4a; --border2: #3a3a6a;
+    --accent: #00e5ff; --accent2: #7c3aed; --green: #22c55e; --yellow: #eab308;
+    --red: #ef4444; --text: #e2e8f0; --muted: #64748b; --card: #12121f;
   }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
+  body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; min-height: 100vh; overflow-x: hidden; }
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,229,255,0.06) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 30% at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,229,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 30% at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 60%);
   }
+  #root { position: relative; z-index: 1; min-height: 100vh; }
 
-  .app { position: relative; z-index: 1; min-height: 100vh; }
-
-  /* ── SCREEN 1: API Key ── */
-  .screen-api {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 2rem;
-  }
-
-  .logo-area { text-align: center; margin-bottom: 3rem; }
-  .logo-icon {
-    width: 72px; height: 72px; border-radius: 16px;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; margin: 0 auto 1.2rem; box-shadow: 0 0 40px rgba(0,229,255,0.2);
-  }
-  .logo-title { font-size: 2.4rem; font-weight: 700; letter-spacing: 2px; color: #fff; }
-  .logo-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.75rem; margin-top: 0.3rem; letter-spacing: 1px; }
-
-  .api-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.5rem;
-    width: 100%; max-width: 480px;
-    box-shadow: 0 0 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-  }
-
+  .screen-api { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+  .logo-icon { width: 72px; height: 72px; border-radius: 16px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.2rem; box-shadow: 0 0 40px rgba(0,229,255,0.2); }
+  .logo-title { font-size: 2.4rem; font-weight: 700; letter-spacing: 2px; text-align:center; }
+  .logo-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.75rem; margin-top: 0.3rem; letter-spacing: 1px; text-align:center; }
+  .api-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 500px; margin-top: 2.5rem; box-shadow: 0 0 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); }
   .api-card h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.4rem; }
-  .api-card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.8rem; line-height: 1.5; }
+  .api-card > p { color: var(--muted); font-size: 0.93rem; margin-bottom: 1.8rem; line-height: 1.65; }
 
-  .field-label {
-    display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: 1.5px;
-    color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase;
-  }
-
-  .api-input {
-    width: 100%; background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 8px; padding: 0.85rem 1rem; color: var(--text);
-    font-family: 'Space Mono', monospace; font-size: 0.82rem;
-    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-  }
+  .field-label { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; }
+  .api-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.82rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
   .api-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
-  .api-input.error { border-color: var(--red); }
-  .api-input.valid { border-color: var(--green); }
+  .api-input.err { border-color: var(--red); }
+  .api-input.ok  { border-color: var(--green); }
 
-  .error-msg { color: var(--red); font-size: 0.82rem; margin-top: 0.5rem; font-family: 'Space Mono', monospace; }
-  .valid-msg { color: var(--green); font-size: 0.82rem; margin-top: 0.5rem; font-family: 'Space Mono', monospace; }
+  .s-inline { min-height: 1.4rem; margin-top: 0.5rem; font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+  .s-info { color: var(--muted); } .s-ok { color: var(--green); } .s-err { color: var(--red); }
 
-  .toggle-row {
-    display: flex; align-items: center; gap: 0.75rem;
-    margin: 1.2rem 0 1.8rem; cursor: pointer; user-select: none;
-  }
+  .toggle-row { display: flex; align-items: center; gap: 0.75rem; margin: 1.2rem 0 1.8rem; cursor: pointer; user-select: none; }
   .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-track {
-    position: absolute; inset: 0; border-radius: 12px;
-    background: var(--bg3); border: 1px solid var(--border);
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .toggle input:checked ~ .toggle-track { background: var(--accent2); border-color: var(--accent2); }
-  .toggle-thumb {
-    position: absolute; top: 3px; left: 3px;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: #fff; transition: transform 0.2s;
-  }
-  .toggle input:checked ~ .toggle-track .toggle-thumb { transform: translateX(20px); }
-  .toggle-label { font-size: 0.9rem; color: var(--muted); }
-  .toggle-label span { color: var(--text); font-weight: 600; }
+  .tog-track { position: absolute; inset: 0; border-radius: 12px; background: var(--bg3); border: 1px solid var(--border); transition: background 0.2s; }
+  .toggle input:checked ~ .tog-track { background: var(--accent2); border-color: var(--accent2); }
+  .tog-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+  .toggle input:checked ~ .tog-track .tog-thumb { transform: translateX(20px); }
+  .tog-label { font-size: 0.9rem; color: var(--muted); }
+  .tog-label b { color: var(--text); font-weight: 600; }
+  .api-help { font-size: 0.8rem; color: var(--muted); margin-top: 1rem; font-family: 'Space Mono', monospace; }
+  .api-help a { color: var(--accent); text-decoration: none; }
 
-  .btn {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.8rem 1.4rem; border-radius: 8px; font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem; font-weight: 700; letter-spacing: 1px;
-    border: none; cursor: pointer; transition: all 0.18s; text-transform: uppercase;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    color: #fff; box-shadow: 0 4px 20px rgba(0,229,255,0.15);
-    width: 100%; justify-content: center;
-  }
-  .btn-primary:hover { filter: brightness(1.12); box-shadow: 0 4px 28px rgba(0,229,255,0.3); transform: translateY(-1px); }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .btn-ghost {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--muted);
-  }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.4rem; border-radius: 8px; font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; border: none; cursor: pointer; transition: all 0.18s; text-transform: uppercase; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; width: 100%; }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
   .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+  .btn-sm { font-size: 0.9rem; padding: 0.6rem 1.1rem; }
 
-  .btn-create {
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    color: #fff; font-size: 0.9rem; padding: 0.65rem 1.2rem;
-  }
-  .btn-create:hover { filter: brightness(1.1); transform: translateY(-1px); }
-
-  .btn-danger { background: var(--red); color: #fff; }
-  .btn-danger:hover { background: #dc2626; }
-
-  .spinner {
-    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff; border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink:0; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── SCREEN 2: Dashboard ── */
-  .screen-dashboard { min-height: 100vh; padding: 0 0 4rem; }
-
-  .topbar {
-    background: rgba(16,16,26,0.9); border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(12px); padding: 1rem 2rem;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 1rem; }
-  .topbar-logo {
-    width: 36px; height: 36px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
-  }
-  .topbar-title { font-size: 1.3rem; font-weight: 700; letter-spacing: 1.5px; }
-  .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
-
-  .key-badge {
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 6px; padding: 0.4rem 0.8rem;
-    font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted);
-    display: flex; align-items: center; gap: 0.5rem;
-  }
+  /* Dashboard */
+  .topbar { background: rgba(16,16,26,0.92); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); padding: 0.9rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 0.8rem; }
+  .tb-logo { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .tb-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 1.5px; }
+  .topbar-right { display: flex; align-items: center; gap: 0.65rem; }
+  .key-badge { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 0.38rem 0.75rem; font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); display: flex; align-items: center; gap: 0.45rem; }
   .key-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .so-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 0.4rem 0.85rem; border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .so-btn:hover { border-color: var(--red); color: var(--red); }
+  .create-btn { background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; border: none; padding: 0.5rem 1.1rem; border-radius: 7px; font-family: 'Rajdhani', sans-serif; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: filter 0.15s; }
+  .create-btn:hover { filter: brightness(1.12); }
 
-  .main { padding: 2rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  .sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem; }
+  .sec-title { font-size: 1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .legend { display: flex; gap: 1.2rem; }
+  .leg-item { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; color: var(--muted); }
+  .leg-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 
-  .section-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.2rem;
-  }
-  .section-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .groupbox { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; min-height: 200px; }
+  .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 1px; background: var(--border); }
+  .a-card { background: var(--bg2); padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; transition: background 0.15s; cursor: default; }
+  .a-card:hover { background: var(--bg3); }
+  .a-preview { width: 100%; aspect-ratio: 1; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  .a-preview img { width: 100%; height: 100%; object-fit: contain; }
+  .a-badge { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; border-radius: 50%; }
+  .bg { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .by { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .a-name { font-size: 0.88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .a-id { font-family: 'Space Mono', monospace; font-size: 0.63rem; color: var(--muted); }
+  .a-tag { display: inline-block; padding: 0.13rem 0.45rem; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); width: fit-content; }
+  .empty-st { padding: 4rem 2rem; text-align: center; color: var(--muted); }
+  .empty-icon { font-size: 2.8rem; margin-bottom: 1rem; opacity: 0.25; }
 
-  .groupbox {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; overflow: hidden;
-  }
-
-  .asset-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px;
-    background: var(--border);
-  }
-  .asset-grid:empty { background: transparent; }
-
-  .asset-card {
-    background: var(--bg2); padding: 1.2rem; display: flex; flex-direction: column;
-    gap: 0.8rem; position: relative; transition: background 0.15s;
-  }
-  .asset-card:hover { background: var(--bg3); }
-
-  .asset-preview {
-    width: 100%; aspect-ratio: 1; border-radius: 8px;
-    background: var(--bg3); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; position: relative;
-  }
-  .asset-preview img, .asset-preview svg { width: 100%; height: 100%; object-fit: contain; }
-  .asset-preview-placeholder {
-    font-size: 2rem; opacity: 0.2;
-  }
-
-  .asset-badge {
-    position: absolute; top: 6px; right: 6px; width: 10px; height: 10px;
-    border-radius: 50%; box-shadow: 0 0 8px currentColor;
-  }
-  .badge-green { background: var(--green); color: var(--green); }
-  .badge-yellow { background: var(--yellow); color: var(--yellow); }
-
-  .asset-name {
-    font-size: 0.9rem; font-weight: 700; letter-spacing: 0.5px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .asset-id { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); }
-  .asset-type-tag {
-    display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    background: var(--bg3); border: 1px solid var(--border); color: var(--muted);
-    width: fit-content;
-  }
-
-  .empty-state {
-    padding: 4rem 2rem; text-align: center; color: var(--muted);
-  }
-  .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
-  .empty-state p { font-size: 0.95rem; }
-
-  /* ── CREATE MODAL ── */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(4px); z-index: 200;
-    display: flex; align-items: center; justify-content: center; padding: 1.5rem;
-    animation: fadeIn 0.15s ease;
-  }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .modal {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; width: 100%; max-width: 520px;
-    box-shadow: 0 0 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-    animation: slideUp 0.2s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-  .modal-header {
-    padding: 1.5rem 1.8rem 1rem;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .modal-header h3 { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; }
-
-  .modal-body { padding: 1.5rem 1.8rem; display: flex; flex-direction: column; gap: 1.2rem; }
-  .modal-footer {
-    padding: 1rem 1.8rem 1.5rem;
-    display: flex; gap: 0.75rem; justify-content: flex-end;
-  }
-
-  .field { display: flex; flex-direction: column; gap: 0.5rem; }
-
-  .tab-row { display: flex; gap: 0.5rem; }
-  .tab-btn {
-    padding: 0.45rem 1rem; border-radius: 6px; border: 1px solid var(--border);
-    background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif;
-    font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; cursor: pointer;
-    transition: all 0.15s; text-transform: uppercase;
-  }
-  .tab-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
-  .tab-btn:not(.active):hover { border-color: var(--border2); color: var(--text); }
-
-  .paste-area {
-    width: 100%; min-height: 100px; background: var(--bg3);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.85rem 1rem; color: var(--text);
-    font-family: 'Space Mono', monospace; font-size: 0.78rem;
-    outline: none; resize: vertical; transition: border-color 0.2s;
-    line-height: 1.5;
-  }
-  .paste-area:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.08); }
-
-  .upload-zone {
-    border: 2px dashed var(--border); border-radius: 8px;
-    padding: 1.5rem; text-align: center; cursor: pointer;
-    transition: all 0.15s; color: var(--muted); font-size: 0.9rem;
-  }
-  .upload-zone:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.03); }
-  .upload-zone input { display: none; }
-  .upload-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
-  .upload-name { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--green); margin-top: 0.4rem; word-break: break-all; }
-
-  .type-tabs { display: flex; gap: 0.5rem; }
-
-  .status-bar {
-    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.75rem 1rem; font-family: 'Space Mono', monospace; font-size: 0.75rem;
-    color: var(--muted); line-height: 1.5;
-  }
-  .status-bar.error { border-color: var(--red); color: var(--red); }
-  .status-bar.success { border-color: var(--green); color: var(--green); }
-
-  .sign-out-btn {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--muted); padding: 0.45rem 0.9rem; border-radius: 6px;
-    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600;
-    letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s;
-  }
-  .sign-out-btn:hover { border-color: var(--red); color: var(--red); }
-
-  .progress-ring { display: flex; align-items: center; gap: 0.5rem; color: var(--accent); font-size: 0.8rem; font-family: 'Space Mono', monospace; }
-
-  .legend { display: flex; gap: 1.5rem; margin-top: 0.75rem; }
-  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--muted); }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50; }
+  /* Modal */
+  .m-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fi 0.15s ease; }
+  @keyframes fi { from { opacity: 0; } }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 540px; box-shadow: 0 0 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05); animation: su 0.2s ease; }
+  @keyframes su { from { transform: translateY(20px); opacity: 0; } }
+  .m-head { padding: 1.4rem 1.7rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .m-head h3 { font-size: 1.15rem; font-weight: 700; letter-spacing: 1px; }
+  .m-body { padding: 1.4rem 1.7rem; display: flex; flex-direction: column; gap: 1.1rem; }
+  .m-foot { padding: 0.9rem 1.7rem 1.4rem; display: flex; gap: 0.7rem; justify-content: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 0.45rem; }
+  .tab-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+  .tab-btn { padding: 0.4rem 0.9rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-size: 0.83rem; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+  .tab-btn.on { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .tab-btn:not(.on):hover { border-color: var(--border2); color: var(--text); }
+  .paste-ta { width: 100%; min-height: 95px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 1rem; color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.77rem; outline: none; resize: vertical; line-height: 1.55; transition: border-color 0.2s; }
+  .paste-ta:focus { border-color: var(--accent); }
+  .up-zone { border: 2px dashed var(--border); border-radius: 8px; padding: 1.4rem; text-align: center; cursor: pointer; color: var(--muted); font-size: 0.88rem; transition: all 0.15s; }
+  .up-zone:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.03); }
+  .up-icon { font-size: 1.7rem; margin-bottom: 0.35rem; }
+  .up-name { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--green); margin-top: 0.35rem; word-break: break-all; }
+  .m-status { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.7rem 0.9rem; font-family: 'Space Mono', monospace; font-size: 0.74rem; line-height: 1.6; }
+  .ms-err { border-color: var(--red); color: var(--red); }
+  .ms-ok { border-color: var(--green); color: var(--green); }
+  .ms-info { border-color: var(--accent); color: var(--accent); }
 
   @media (max-width: 600px) {
-    .topbar { padding: 1rem; }
-    .main { padding: 1.5rem 1rem; }
-    .modal { margin: 0.5rem; }
-    .asset-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .topbar { padding: 0.8rem 1rem; }
+    .main { padding: 1.2rem 0.9rem; }
     .key-badge { display: none; }
+    .asset-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
   }
 </style>
 </head>
-<body>
-<div id="root"></div>
-<script type="module">
-// ──────────────────────────────────────────────
-// Roblox Asset Creator
-// ──────────────────────────────────────────────
-const STORAGE_KEY_API = 'roblox_asset_creator_apikey';
-const STORAGE_KEY_ASSETS = 'roblox_asset_creator_local_assets';
+<body><div id="root"></div>
+<script>
+const SK = 'rbx_apikey_v3', AK = 'rbx_assets_v3';
+const PROXY = '/api/roblox';
 
-// ── Helpers ──
-function $(id) { return document.getElementById(id); }
-function el(tag, attrs = {}, ...children) {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'class') e.className = v;
-    else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
-    else e.setAttribute(k, v);
-  }
-  for (const c of children) {
-    if (typeof c === 'string') e.appendChild(document.createTextNode(c));
-    else if (c) e.appendChild(c);
-  }
-  return e;
-}
+const getSaved = () => { try { return localStorage.getItem(SK)||''; } catch { return ''; } };
+const setSaved = k => { try { localStorage.setItem(SK,k); } catch {} };
+const clearSaved = () => { try { localStorage.removeItem(SK); } catch {} };
+const getLocal = () => { try { return JSON.parse(localStorage.getItem(AK)||'[]'); } catch { return []; } };
+const saveLocal = a => { try { localStorage.setItem(AK,JSON.stringify(a)); } catch {} };
 
-function getSavedKey() { try { return localStorage.getItem(STORAGE_KEY_API) || ''; } catch { return ''; } }
-function saveKey(k) { try { localStorage.setItem(STORAGE_KEY_API, k); } catch {} }
-function clearKey() { try { localStorage.removeItem(STORAGE_KEY_API); } catch {} }
-function getLocalAssets() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS) || '[]'); } catch { return []; } }
-function saveLocalAssets(arr) { try { localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(arr)); } catch {} }
+let apiKey = '', localAssets = getLocal(), remoteAssets = [];
 
-// ── State ──
-let apiKey = '';
-let assets = []; // {id, name, assetType, thumbnail, createdByUs, created}
-let localAssets = getLocalAssets(); // assets we uploaded
-let createModalOpen = false;
-
-// ──────────────────────────────────────────────
-// SCREEN 1: API Key entry
-// ──────────────────────────────────────────────
-function renderScreen1() {
-  const saved = getSavedKey();
-  const root = $('root');
-  root.innerHTML = '';
-
-  const screen = el('div', { class: 'screen-api' });
-
-  const logoArea = el('div', { class: 'logo-area' });
-  const logoIcon = el('div', { class: 'logo-icon' }, '🎮');
-  const logoTitle = el('div', { class: 'logo-title' }, 'ASSET FORGE');
-  const logoSub = el('div', { class: 'logo-sub' }, 'ROBLOX CREATOR TOOLKIT');
-  logoArea.append(logoIcon, logoTitle, logoSub);
-
-  const card = el('div', { class: 'api-card' });
-  const h2 = el('h2', {}, 'Connect your API Key');
-  const desc = el('p', {}, 'Enter your Roblox Open Cloud API key to get started. You can generate one in the Roblox Creator Hub under API Keys.');
-
-  const label = el('label', { class: 'field-label', for: 'apiKeyInput' }, 'API KEY');
-  const inputRow = el('div', { style: 'position:relative' });
-  const input = el('input', {
-    type: 'password', id: 'apiKeyInput', class: 'api-input',
-    placeholder: 'paste your Roblox Open Cloud API key…',
-    value: saved,
-    autocomplete: 'off'
+// proxy call (server-side, bypasses CORS)
+async function rbx(path, method='GET', body=null, extraHeaders={}) {
+  return fetch(PROXY, {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'x-roblox-path': path, 'x-roblox-method': method, ...extraHeaders },
+    body
   });
-  inputRow.append(input);
-
-  const statusEl = el('div', { style: 'min-height:1.4rem; margin-top:0.5rem;' });
-
-  // Toggle row
-  const toggleRow = el('label', { class: 'toggle-row' });
-  const toggleWrap = el('span', { class: 'toggle' });
-  const toggleInput = el('input', { type: 'checkbox', id: 'saveToggle' });
-  if (saved) toggleInput.checked = true;
-  const toggleTrack = el('span', { class: 'toggle-track' });
-  const thumb = el('span', { class: 'toggle-thumb' });
-  toggleTrack.appendChild(thumb);
-  toggleWrap.append(toggleInput, toggleTrack);
-  const toggleLabel = el('span', { class: 'toggle-label' });
-  toggleLabel.innerHTML = '<span>Remember</span> this key on next visit';
-  toggleRow.append(toggleWrap, toggleLabel);
-
-  const submitBtn = el('button', { class: 'btn btn-primary', id: 'connectBtn' }, '');
-  const spinnerEl = el('span', { class: 'spinner', style: 'display:none', id: 'apiSpinner' });
-  submitBtn.append(spinnerEl);
-  submitBtn.appendChild(document.createTextNode(' Connect & Validate'));
-
-  submitBtn.addEventListener('click', async () => {
-    const key = input.value.trim();
-    if (!key) {
-      showStatus(statusEl, 'error', '⚠ Please paste an API key first.');
-      input.className = 'api-input error';
-      return;
-    }
-    setLoading(true);
-    showStatus(statusEl, '', '⏳ Validating key with Roblox API…');
-    const valid = await validateApiKey(key);
-    setLoading(false);
-    if (valid) {
-      input.className = 'api-input valid';
-      showStatus(statusEl, 'success', '✓ Key validated! Loading dashboard…');
-      if (toggleInput.checked) saveKey(key); else clearKey();
-      apiKey = key;
-      setTimeout(() => renderScreen2(), 700);
-    } else {
-      input.className = 'api-input error';
-      showStatus(statusEl, 'error', '✗ Invalid key or insufficient permissions. Make sure it has Asset read/write access.');
-    }
-  });
-
-  function setLoading(on) {
-    submitBtn.disabled = on;
-    $('apiSpinner').style.display = on ? 'inline-block' : 'none';
-  }
-
-  card.append(h2, desc, label, inputRow, statusEl, toggleRow, submitBtn);
-  screen.append(logoArea, card);
-  root.appendChild(screen);
-  if (saved) input.focus();
 }
 
-function showStatus(el, type, msg) {
-  el.className = type === 'error' ? 'error-msg' : type === 'success' ? 'valid-msg' : '';
-  el.textContent = msg;
-}
-
-// ── Roblox API: validate key by listing assets ──
-async function validateApiKey(key) {
+// Validate: anything that isn't 401/403 means the key authenticated
+async function validateKey(key) {
   try {
-    // Try fetching the user's creator info via Open Cloud
-    // We'll call the Assets API - list assets. If 401/403 → invalid.
-    const res = await fetch('https://apis.roblox.com/assets/v1/assets?assetType=Decal&limit=1', {
-      headers: { 'x-api-key': key }
+    const r = await fetch(PROXY, {
+      method: 'POST',
+      headers: { 'x-api-key': key, 'x-roblox-path': '/assets/v1/assets?assetType=Decal&limit=1', 'x-roblox-method': 'GET' }
     });
-    // 200 or 404 (no assets) = valid key; 401/403 = invalid
-    return res.status !== 401 && res.status !== 403;
-  } catch {
-    // Network issue - try a second endpoint
-    try {
-      const res2 = await fetch('https://apis.roblox.com/assets/v1/assets?assetType=Image&limit=1', {
-        headers: { 'x-api-key': key }
-      });
-      return res2.status !== 401 && res2.status !== 403;
-    } catch { return false; }
-  }
+    return { ok: r.status !== 401 && r.status !== 403, status: r.status };
+  } catch(e) { return { ok: false, status: 0, err: e.message }; }
 }
 
-// ──────────────────────────────────────────────
-// SCREEN 2: Dashboard
-// ──────────────────────────────────────────────
-async function renderScreen2() {
-  const root = $('root');
-  root.innerHTML = '';
+// ── Screen 1 ──────────────────────────────────────────────────────────────
+function screen1() {
+  const saved = getSaved();
+  document.getElementById('root').innerHTML = `
+<div class="screen-api">
+  <div>
+    <div class="logo-icon">🎮</div>
+    <div class="logo-title">ASSET FORGE</div>
+    <div class="logo-sub">ROBLOX CREATOR TOOLKIT</div>
+  </div>
+  <div class="api-card">
+    <h2>Connect your API Key</h2>
+    <p>Enter your Roblox Open Cloud API key. In Creator Hub → Open Cloud → API Keys, create a key with <strong>Assets: read + write</strong> for your universe.</p>
+    <label class="field-label" for="ki">API KEY</label>
+    <input class="api-input" type="password" id="ki" placeholder="paste key here…" autocomplete="off" value="${saved||''}" />
+    <div class="s-inline s-info" id="ks"> </div>
+    <label class="toggle-row">
+      <span class="toggle">
+        <input type="checkbox" id="st" ${saved?'checked':''}>
+        <span class="tog-track"><span class="tog-thumb"></span></span>
+      </span>
+      <span class="tog-label"><b>Remember</b> this key on next visit</span>
+    </label>
+    <button class="btn btn-primary" id="cb" onclick="doConnect()">
+      <span class="spinner" id="cs" style="display:none"></span>
+      Connect &amp; Validate
+    </button>
+    <p class="api-help">Need a key? <a href="https://create.roblox.com/dashboard/credentials" target="_blank">Creator Hub → Open Cloud → API Keys ↗</a></p>
+  </div>
+</div>`;
+}
 
-  const screen = el('div', { class: 'screen-dashboard' });
+function setKS(cls, msg) {
+  const e = document.getElementById('ks'); if (!e) return;
+  e.className = 's-inline ' + cls; e.textContent = msg;
+}
 
-  // Topbar
-  const topbar = el('div', { class: 'topbar' });
-  const tbLeft = el('div', { class: 'topbar-left' });
-  const tbLogo = el('div', { class: 'topbar-logo' }, '🎮');
-  const tbTitle = el('div', { class: 'topbar-title' }, 'ASSET FORGE');
-  tbLeft.append(tbLogo, tbTitle);
+async function doConnect() {
+  const key = (document.getElementById('ki')?.value||'').trim();
+  if (!key) { setKS('s-err','⚠ Paste a key first.'); kicls('err'); return; }
+  document.getElementById('cb').disabled = true;
+  document.getElementById('cs').style.display = 'inline-block';
+  setKS('s-info','⏳ Contacting Roblox via proxy…');
 
-  const tbRight = el('div', { class: 'topbar-right' });
-  const keyBadge = el('div', { class: 'key-badge' });
-  const keyDot = el('span', { class: 'key-dot' });
-  keyBadge.append(keyDot, document.createTextNode(maskKey(apiKey)));
+  const r = await validateKey(key);
 
-  const createBtn = el('button', { class: 'btn btn-create', id: 'openCreateBtn' }, '＋ New Asset');
-  createBtn.addEventListener('click', () => openCreateModal());
+  document.getElementById('cb').disabled = false;
+  document.getElementById('cs').style.display = 'none';
 
-  const signOutBtn = el('button', { class: 'sign-out-btn' }, 'Sign Out');
-  signOutBtn.addEventListener('click', () => { apiKey = ''; renderScreen1(); });
+  if (r.ok) {
+    kicls('ok'); setKS('s-ok','✓ Key accepted — loading dashboard…');
+    if (document.getElementById('st')?.checked) setSaved(key); else clearSaved();
+    apiKey = key;
+    setTimeout(screen2, 600);
+  } else {
+    kicls('err');
+    setKS('s-err', r.status === 0
+      ? '✗ Proxy unreachable — deploy to Vercel first.'
+      : `✗ Rejected (HTTP ${r.status}) — check Assets read+write scope.`);
+  }
+}
+function kicls(s) { const e = document.getElementById('ki'); if(e) e.className = 'api-input '+(s==='err'?'err':s==='ok'?'ok':''); }
 
-  tbRight.append(keyBadge, createBtn, signOutBtn);
-  topbar.append(tbLeft, tbRight);
-
-  // Main
-  const main = el('div', { class: 'main' });
-
-  const secHeader = el('div', { class: 'section-header' });
-  const secTitle = el('div', { class: 'section-title' }, 'Your Assets');
-  const legend = el('div', { class: 'legend' });
-  legend.innerHTML = `
-    <span class="legend-item"><span class="legend-dot" style="background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);display:inline-block"></span> Created here</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--yellow);border-radius:50%;box-shadow:0 0 6px var(--yellow);display:inline-block"></span> External</span>
-  `;
-  secHeader.append(secTitle, legend);
-
-  const groupbox = el('div', { class: 'groupbox', id: 'assetGroupbox' });
-  const grid = el('div', { class: 'asset-grid', id: 'assetGrid' });
-  const empty = el('div', { class: 'empty-state', id: 'emptyState' });
-  empty.innerHTML = '<div class="empty-state-icon">📦</div><p>No assets yet — create your first one!</p>';
-  groupbox.append(grid, empty);
-  main.append(secHeader, groupbox);
-  screen.append(topbar, main);
-  root.appendChild(screen);
-
-  // Load assets
+// ── Screen 2 ──────────────────────────────────────────────────────────────
+async function screen2() {
+  document.getElementById('root').innerHTML = `
+<div>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="tb-logo">🎮</div>
+      <div class="tb-title">ASSET FORGE</div>
+    </div>
+    <div class="topbar-right">
+      <div class="key-badge"><span class="key-dot"></span>${maskKey(apiKey)}</div>
+      <button class="create-btn" onclick="openModal()">＋ New Asset</button>
+      <button class="so-btn" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sec-header">
+      <div class="sec-title">Your Assets</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-dot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>Created here</span>
+        <span class="leg-item"><span class="leg-dot" style="background:var(--yellow);box-shadow:0 0 6px var(--yellow)"></span>External</span>
+      </div>
+    </div>
+    <div class="groupbox" id="gb">
+      <div style="padding:2rem;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.82rem;display:flex;align-items:center;gap:0.75rem;">
+        <span class="spinner" style="border-top-color:var(--accent)"></span> Loading assets…
+      </div>
+    </div>
+  </div>
+</div>`;
   await loadAssets();
   renderGrid();
 }
 
-function maskKey(k) {
-  if (!k) return '—';
-  return k.slice(0, 6) + '…' + k.slice(-4);
-}
+function maskKey(k) { return k?k.slice(0,6)+'…'+k.slice(-4):'—'; }
+function signOut() { apiKey=''; screen1(); }
 
 async function loadAssets() {
-  assets = [];
+  remoteAssets = [];
   try {
-    const res = await fetch('https://apis.roblox.com/assets/v1/assets?limit=50', {
-      headers: { 'x-api-key': apiKey }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      const list = data.assets || data.data || [];
-      const localIds = new Set(localAssets.map(a => String(a.id)));
-      assets = list.map(a => ({
-        id: String(a.assetId || a.id || ''),
-        name: a.displayName || a.name || 'Unnamed',
-        assetType: a.assetType || 'Unknown',
-        thumbnail: a.thumbnailUrl || null,
-        createdByUs: localIds.has(String(a.assetId || a.id || '')),
-        preview: null
+    const r = await rbx('/assets/v1/assets?assetType=Decal&limit=50');
+    if (r.ok) {
+      const d = await r.json();
+      const list = d.assets || d.data || [];
+      const lids = new Set(localAssets.map(a=>String(a.id)));
+      remoteAssets = list.map(a=>({
+        id: String(a.assetId||a.id||''),
+        name: a.displayName||a.name||'Unnamed',
+        assetType: a.assetType||'Decal',
+        previewUrl: a.thumbnailUrl||null,
+        createdByUs: lids.has(String(a.assetId||a.id||''))
       }));
     }
   } catch {}
-
-  // Merge local assets not returned by the API
-  for (const la of localAssets) {
-    if (!assets.find(a => a.id === String(la.id))) {
-      assets.unshift({ ...la, createdByUs: true });
-    }
-  }
 }
 
 function renderGrid() {
-  const grid = $('assetGrid');
-  const empty = $('emptyState');
-  if (!grid) return;
-  grid.innerHTML = '';
-  const all = [...assets];
-  if (all.length === 0) {
-    empty.style.display = 'block';
+  const gb = document.getElementById('gb'); if (!gb) return;
+  const combined = [
+    ...localAssets.map(a=>({...a, createdByUs:true})),
+    ...remoteAssets.filter(ra=>!localAssets.find(la=>String(la.id)===ra.id))
+  ];
+  if (!combined.length) {
+    gb.innerHTML = `<div class="empty-st"><div class="empty-icon">📦</div><p>No assets yet — hit <strong>＋ New Asset</strong> to create your first.</p></div>`;
+    return;
+  }
+  const grid = document.createElement('div');
+  grid.className = 'asset-grid';
+  for (const a of combined) grid.appendChild(mkCard(a));
+  gb.innerHTML = ''; gb.appendChild(grid);
+}
+
+function mkCard(a) {
+  const d = document.createElement('div'); d.className = 'a-card';
+  const src = a.previewDataUrl || a.previewUrl;
+  d.innerHTML = `
+    <div class="a-preview">
+      ${src ? `<img src="${src}" alt="${a.name}" />` : '<span style="font-size:2rem;opacity:0.2">🖼</span>'}
+      <span class="a-badge ${a.createdByUs?'bg':'by'}"></span>
+    </div>
+    <div class="a-name" title="${a.name}">${a.name}</div>
+    <div class="a-id">${a.id?'ID: '+a.id:'Pending…'}</div>
+    <div class="a-tag">${a.assetType||'Decal'}</div>`;
+  return d;
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+let ms = {};
+function openModal() {
+  ms = { name:'', fmt:'png', mode:'paste', svgT:'', pngT:'', file:null, status:'', stype:'', busy:false };
+  drawModal();
+}
+function closeModal() { document.getElementById('mo')?.remove(); }
+
+function drawModal() {
+  document.getElementById('mo')?.remove();
+  const ov = document.createElement('div');
+  ov.id = 'mo'; ov.className = 'm-overlay';
+  ov.onclick = e => { if(e.target===ov) closeModal(); };
+  ov.innerHTML = `
+<div class="modal">
+  <div class="m-head">
+    <h3>✦ Create New Asset</h3>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+  </div>
+  <div class="m-body">
+    <div class="field">
+      <label class="field-label">Asset Name</label>
+      <input class="api-input" type="text" id="mn" placeholder="My Cool Decal" value="${ms.name}" oninput="ms.name=this.value" />
+    </div>
+    <div class="field">
+      <label class="field-label">Format</label>
+      <div class="tab-row">
+        <button class="tab-btn ${ms.fmt==='png'?'on':''}" onclick="ms.fmt='png';drawModal()">PNG</button>
+        <button class="tab-btn ${ms.fmt==='svg'?'on':''}" onclick="ms.fmt='svg';drawModal()">SVG</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">Input Method</label>
+      <div class="tab-row">
+        <button class="tab-btn ${ms.mode==='paste'?'on':''}" onclick="ms.mode='paste';drawModal()">📋 Paste</button>
+        <button class="tab-btn ${ms.mode==='upload'?'on':''}" onclick="ms.mode='upload';drawModal()">📁 Upload File</button>
+      </div>
+    </div>
+    <div class="field" id="cf"></div>
+    ${ms.status?`<div class="m-status ${ms.stype==='err'?'ms-err':ms.stype==='ok'?'ms-ok':'ms-info'}">${ms.status}</div>`:''}
+  </div>
+  <div class="m-foot">
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-primary btn-sm" style="width:auto;min-width:145px;" id="dcb" onclick="doCreate()" ${ms.busy?'disabled':''}>
+      ${ms.busy?'<span class="spinner"></span> Creating…':'✦ Create Asset'}
+    </button>
+  </div>
+</div>`;
+  document.body.appendChild(ov);
+  drawContentField();
+}
+
+function drawContentField() {
+  const f = document.getElementById('cf'); if (!f) return;
+  f.innerHTML = `<label class="field-label">${ms.fmt.toUpperCase()} Content</label>`;
+  if (ms.mode==='paste') {
+    const ta = document.createElement('textarea');
+    ta.className = 'paste-ta';
+    ta.placeholder = ms.fmt==='svg'
+      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">…</svg>'
+      : 'Paste base64 PNG string or data:image/png;base64,… URL';
+    ta.value = ms.fmt==='svg' ? ms.svgT : ms.pngT;
+    ta.oninput = e => { if(ms.fmt==='svg') ms.svgT=e.target.value; else ms.pngT=e.target.value; };
+    f.appendChild(ta);
   } else {
-    empty.style.display = 'none';
-    for (const asset of all) grid.appendChild(makeAssetCard(asset));
+    const accept = ms.fmt==='svg' ? '.svg,image/svg+xml' : '.png,image/png';
+    const z = document.createElement('div'); z.className='up-zone';
+    z.innerHTML = `<div class="up-icon">${ms.fmt==='svg'?'🖊':'🖼'}</div>
+      <div>Click to upload .${ms.fmt} file</div>
+      <input type="file" accept="${accept}" style="display:none" id="fi" />
+      <div class="up-name" id="un">${ms.file?ms.file.name:''}</div>`;
+    z.onclick = () => document.getElementById('fi')?.click();
+    f.appendChild(z);
+    setTimeout(()=>{
+      const fi=document.getElementById('fi');
+      if(fi) fi.onchange=e=>{ ms.file=e.target.files[0]||null; const u=document.getElementById('un'); if(u&&ms.file)u.textContent=ms.file.name; };
+    },0);
   }
 }
 
-function makeAssetCard(asset) {
-  const card = el('div', { class: 'asset-card' });
+async function doCreate() {
+  ms.name = (document.getElementById('mn')?.value||'').trim();
+  if (!ms.name) { ms.status='⚠ Enter an asset name.'; ms.stype='err'; drawModal(); return; }
 
-  const preview = el('div', { class: 'asset-preview' });
-  const badge = el('span', { class: 'asset-badge ' + (asset.createdByUs ? 'badge-green' : 'badge-yellow') });
-  preview.appendChild(badge);
-
-  if (asset.svgData) {
-    preview.innerHTML += asset.svgData;
-    preview.appendChild(badge);
-  } else if (asset.pngData || asset.thumbnail) {
-    const img = el('img', { src: asset.pngData || asset.thumbnail, alt: asset.name });
-    preview.appendChild(img);
-    preview.appendChild(badge);
-  } else {
-    const placeholder = el('div', { class: 'asset-preview-placeholder' }, '🖼');
-    preview.appendChild(placeholder);
-    preview.appendChild(badge);
-  }
-
-  const name = el('div', { class: 'asset-name' }, asset.name);
-  const idEl = el('div', { class: 'asset-id' }, asset.id ? `ID: ${asset.id}` : 'Pending…');
-  const typeTag = el('div', { class: 'asset-type-tag' }, asset.assetType || 'Image');
-
-  card.append(preview, name, idEl, typeTag);
-  return card;
-}
-
-// ──────────────────────────────────────────────
-// CREATE MODAL
-// ──────────────────────────────────────────────
-let modalState = {
-  name: '', assetFormat: 'svg', svgPaste: '', pngPaste: '',
-  svgFile: null, pngFile: null, inputMode: 'paste', status: '', statusType: '', creating: false
-};
-
-function openCreateModal() {
-  modalState = { name: '', assetFormat: 'svg', svgPaste: '', pngPaste: '', svgFile: null, pngFile: null, inputMode: 'paste', status: '', statusType: '', creating: false };
-  renderModal();
-}
-
-function renderModal() {
-  // Remove existing
-  const existing = $('createModalOverlay');
-  if (existing) existing.remove();
-
-  const overlay = el('div', { class: 'modal-overlay', id: 'createModalOverlay' });
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-
-  const modal = el('div', { class: 'modal' });
-
-  // Header
-  const header = el('div', { class: 'modal-header' });
-  const h3 = el('h3', {}, '✦ Create New Asset');
-  const closeBtn = el('button', { class: 'btn btn-ghost', style: 'padding:0.4rem 0.8rem;font-size:1rem;' }, '✕');
-  closeBtn.addEventListener('click', closeModal);
-  header.append(h3, closeBtn);
-
-  // Body
-  const body = el('div', { class: 'modal-body' });
-
-  // Name field
-  const nameField = el('div', { class: 'field' });
-  const nameLabel = el('label', { class: 'field-label' }, 'Asset Name');
-  const nameInput = el('input', {
-    class: 'api-input', type: 'text', placeholder: 'e.g. My Cool Decal',
-    value: modalState.name
-  });
-  nameInput.addEventListener('input', e => { modalState.name = e.target.value; });
-  nameField.append(nameLabel, nameInput);
-
-  // Format tabs
-  const formatField = el('div', { class: 'field' });
-  const formatLabel = el('label', { class: 'field-label' }, 'Asset Type');
-  const tabRow = el('div', { class: 'tab-row' });
-  for (const fmt of ['svg', 'png']) {
-    const tb = el('button', { class: 'tab-btn' + (modalState.assetFormat === fmt ? ' active' : '') }, fmt.toUpperCase());
-    tb.addEventListener('click', () => { modalState.assetFormat = fmt; rerenderModalBody(); });
-    tabRow.appendChild(tb);
-  }
-  formatField.append(formatLabel, tabRow);
-
-  // Input mode tabs
-  const modeField = el('div', { class: 'field' });
-  const modeLabel = el('label', { class: 'field-label' }, 'Input Method');
-  const modeRow = el('div', { class: 'tab-row' });
-  for (const m of ['paste', 'upload']) {
-    const tb = el('button', { class: 'tab-btn' + (modalState.inputMode === m ? ' active' : '') }, m === 'paste' ? '📋 Paste' : '📁 Upload File');
-    tb.addEventListener('click', () => { modalState.inputMode = m; rerenderModalBody(); });
-    modeRow.appendChild(tb);
-  }
-  modeField.append(modeLabel, modeRow);
-
-  // Content area
-  const contentField = el('div', { class: 'field', id: 'modalContentField' });
-  body.append(nameField, formatField, modeField, contentField);
-  renderContentField(contentField);
-
-  // Status
-  if (modalState.status) {
-    const statusBar = el('div', { class: `status-bar ${modalState.statusType === 'error' ? 'error' : modalState.statusType === 'success' ? 'success' : ''}` }, modalState.status);
-    body.appendChild(statusBar);
-  }
-
-  // Footer
-  const footer = el('div', { class: 'modal-footer' });
-  const cancelBtn = el('button', { class: 'btn btn-ghost' }, 'Cancel');
-  cancelBtn.addEventListener('click', closeModal);
-  const createBtn = el('button', { class: 'btn btn-primary', style: 'width:auto;min-width:140px;', id: 'modalCreateBtn' }, '');
-  if (modalState.creating) {
-    const sp = el('span', { class: 'spinner' });
-    createBtn.appendChild(sp);
-    createBtn.appendChild(document.createTextNode(' Creating…'));
-    createBtn.disabled = true;
-  } else {
-    createBtn.textContent = '✦ Create Asset';
-  }
-  createBtn.addEventListener('click', handleCreate);
-  footer.append(cancelBtn, createBtn);
-
-  modal.append(header, body, footer);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-}
-
-function renderContentField(container) {
-  container.innerHTML = '';
-  const label = el('label', { class: 'field-label' }, `${modalState.assetFormat.toUpperCase()} Data`);
-  container.appendChild(label);
-
-  if (modalState.inputMode === 'paste') {
-    const ta = el('textarea', {
-      class: 'paste-area',
-      placeholder: modalState.assetFormat === 'svg'
-        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">…</svg>'
-        : 'Paste base64 PNG data or a data:image/png;base64,… URL'
-    });
-    ta.value = modalState.assetFormat === 'svg' ? modalState.svgPaste : modalState.pngPaste;
-    ta.addEventListener('input', e => {
-      if (modalState.assetFormat === 'svg') modalState.svgPaste = e.target.value;
-      else modalState.pngPaste = e.target.value;
-    });
-    container.appendChild(ta);
-  } else {
-    const zone = el('div', { class: 'upload-zone' });
-    const icon = el('div', { class: 'upload-icon' }, modalState.assetFormat === 'svg' ? '🖊' : '🖼');
-    const txt = el('div', {}, `Click to upload .${modalState.assetFormat} file`);
-    const fileInput = el('input', { type: 'file', accept: modalState.assetFormat === 'svg' ? '.svg,image/svg+xml' : '.png,image/png' });
-    const fileName = el('div', { class: 'upload-name' });
-
-    const currentFile = modalState.assetFormat === 'svg' ? modalState.svgFile : modalState.pngFile;
-    if (currentFile) fileName.textContent = currentFile.name;
-
-    fileInput.addEventListener('change', e => {
-      const f = e.target.files[0];
-      if (!f) return;
-      if (modalState.assetFormat === 'svg') modalState.svgFile = f;
-      else modalState.pngFile = f;
-      fileName.textContent = f.name;
-    });
-
-    zone.addEventListener('click', () => fileInput.click());
-    zone.append(icon, txt, fileInput, fileName);
-    container.appendChild(zone);
-  }
-}
-
-function rerenderModalBody() {
-  const existing = $('createModalOverlay');
-  if (existing) existing.remove();
-  renderModal();
-}
-
-function closeModal() {
-  const existing = $('createModalOverlay');
-  if (existing) existing.remove();
-}
-
-async function handleCreate() {
-  const name = modalState.name.trim();
-  if (!name) { modalState.status = '⚠ Please enter an asset name.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
-
-  let contentData = null;
-  let mimeType = '';
-
-  if (modalState.inputMode === 'paste') {
-    const raw = modalState.assetFormat === 'svg' ? modalState.svgPaste.trim() : modalState.pngPaste.trim();
-    if (!raw) { modalState.status = '⚠ Please paste some content.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
-    if (modalState.assetFormat === 'svg') {
-      mimeType = 'image/svg+xml';
-      contentData = new Blob([raw], { type: mimeType });
+  let blob, mime;
+  if (ms.mode==='paste') {
+    const raw = (ms.fmt==='svg'?ms.svgT:ms.pngT).trim();
+    if (!raw) { ms.status='⚠ Paste some content.'; ms.stype='err'; drawModal(); return; }
+    if (ms.fmt==='svg') {
+      mime='image/svg+xml'; blob=new Blob([raw],{type:mime});
     } else {
-      // Handle base64 or data URL
       try {
-        let b64 = raw.includes(',') ? raw.split(',')[1] : raw;
-        const byteStr = atob(b64);
-        const arr = new Uint8Array(byteStr.length);
-        for (let i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-        mimeType = 'image/png';
-        contentData = new Blob([arr], { type: mimeType });
-      } catch { modalState.status = '✗ Invalid PNG data — make sure it\'s valid base64.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
+        let b64=raw.includes(',')?raw.split(',')[1]:raw;
+        const bstr=atob(b64), arr=new Uint8Array(bstr.length);
+        for(let i=0;i<bstr.length;i++) arr[i]=bstr.charCodeAt(i);
+        mime='image/png'; blob=new Blob([arr],{type:mime});
+      } catch { ms.status='✗ Invalid PNG base64.'; ms.stype='err'; drawModal(); return; }
     }
   } else {
-    const file = modalState.assetFormat === 'svg' ? modalState.svgFile : modalState.pngFile;
-    if (!file) { modalState.status = '⚠ Please upload a file.'; modalState.statusType = 'error'; rerenderModalBody(); return; }
-    mimeType = file.type || (modalState.assetFormat === 'svg' ? 'image/svg+xml' : 'image/png');
-    contentData = file;
+    if (!ms.file) { ms.status='⚠ Upload a file first.'; ms.stype='err'; drawModal(); return; }
+    mime=ms.file.type||(ms.fmt==='svg'?'image/svg+xml':'image/png');
+    blob=ms.file;
   }
 
-  modalState.creating = true;
-  modalState.status = '⏳ Uploading asset to Roblox…';
-  modalState.statusType = '';
-  rerenderModalBody();
-
-  // Read preview data
-  let previewDataUrl = null;
+  let previewDataUrl=null;
   try {
-    previewDataUrl = await new Promise((res, rej) => {
-      const fr = new FileReader();
-      fr.onload = () => res(fr.result);
-      fr.onerror = rej;
-      fr.readAsDataURL(contentData);
+    previewDataUrl = await new Promise((res,rej)=>{
+      const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(blob);
     });
   } catch {}
 
-  // Build multipart form
-  try {
-    const formData = new FormData();
-    const requestBody = {
-      assetType: modalState.assetFormat === 'svg' ? 'Decal' : 'Decal',
-      displayName: name,
-      description: `Created via Asset Forge`,
-      creationContext: { creator: { userId: 'me' } }
-    };
-    formData.append('request', new Blob([JSON.stringify(requestBody)], { type: 'application/json' }));
-    formData.append('fileContent', contentData, `asset.${modalState.assetFormat}`);
+  ms.busy=true; ms.status='⏳ Uploading to Roblox Open Cloud…'; ms.stype='info'; drawModal();
 
-    const res = await fetch('https://apis.roblox.com/assets/v1/assets', {
-      method: 'POST',
-      headers: { 'x-api-key': apiKey },
-      body: formData
+  try {
+    const form=new FormData();
+    form.append('request', new Blob([JSON.stringify({
+      assetType:'Decal', displayName:ms.name, description:'Created via Asset Forge',
+      creationContext:{creator:{}}
+    })],{type:'application/json'}));
+    form.append('fileContent', blob, `asset.${ms.fmt}`);
+
+    // Don't set Content-Type — browser sets multipart boundary automatically
+    const r = await fetch(PROXY, {
+      method:'POST',
+      headers:{ 'x-api-key':apiKey, 'x-roblox-path':'/assets/v1/assets', 'x-roblox-method':'POST' },
+      body:form
     });
 
-    const data = await res.json();
+    let data; try { data=await r.json(); } catch { data={}; }
 
-    if (res.ok) {
-      const newAsset = {
-        id: String(data.assetId || data.operationId || data.id || Date.now()),
-        name: name,
-        assetType: 'Decal',
-        thumbnail: previewDataUrl,
-        pngData: modalState.assetFormat === 'png' ? previewDataUrl : null,
-        svgData: modalState.assetFormat === 'svg' && (modalState.svgPaste || (modalState.svgFile ? '(file)' : null))
-          ? null : null,
-        previewDataUrl,
-        createdByUs: true,
-        created: Date.now()
-      };
-      localAssets.unshift(newAsset);
-      saveLocalAssets(localAssets);
-      assets.unshift(newAsset);
-
-      modalState.creating = false;
-      modalState.status = `✓ Asset "${name}" created! ID: ${newAsset.id}`;
-      modalState.statusType = 'success';
-      rerenderModalBody();
+    if (r.ok) {
+      const id=String(data.assetId||data.operationId||data.id||Date.now());
+      const na={id, name:ms.name, assetType:'Decal', previewDataUrl, createdByUs:true, created:Date.now()};
+      localAssets.unshift(na); saveLocal(localAssets);
+      ms.busy=false; ms.status=`✓ Asset created! ID: ${id}`; ms.stype='ok'; drawModal();
       renderGrid();
       setTimeout(closeModal, 2000);
     } else {
-      const errMsg = data.message || data.error || JSON.stringify(data);
-      modalState.creating = false;
-      modalState.status = `✗ API error: ${errMsg}`;
-      modalState.statusType = 'error';
-      rerenderModalBody();
+      const msg=data.message||data.error||data.errors?.[0]?.message||JSON.stringify(data);
+      ms.busy=false; ms.status=`✗ Roblox error (${r.status}): ${msg}`; ms.stype='err'; drawModal();
     }
-  } catch (err) {
-    modalState.creating = false;
-    modalState.status = `✗ Network error: ${err.message}`;
-    modalState.statusType = 'error';
-    rerenderModalBody();
+  } catch(e) {
+    ms.busy=false; ms.status=`✗ Network error: ${e.message}`; ms.stype='err'; drawModal();
   }
 }
 
-// ── Boot ──
-const saved = getSavedKey();
-if (saved) {
-  // Show loading briefly then try auto-validate
-  const root = $('root');
-  root.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:1rem;">
-    <div style="width:48px;height:48px;border:3px solid #2a2a4a;border-top-color:#00e5ff;border-radius:50%;animation:spin 0.7s linear infinite;"></div>
-    <div style="font-family:'Rajdhani',sans-serif;color:#64748b;letter-spacing:2px;font-size:0.85rem;">VALIDATING SAVED KEY…</div>
-  </div>`;
-  validateApiKey(saved).then(valid => {
-    if (valid) { apiKey = saved; renderScreen2(); }
-    else { clearKey(); renderScreen1(); }
-  });
-} else {
-  renderScreen1();
-}
+// ── Boot ──────────────────────────────────────────────────────────────────
+(async()=>{
+  const saved=getSaved();
+  if (saved) {
+    document.getElementById('root').innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:1rem;">
+        <div class="spinner" style="width:38px;height:38px;border-width:3px;border-top-color:var(--accent)"></div>
+        <div style="font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:2px;font-size:0.78rem;">VALIDATING SAVED KEY…</div>
+      </div>`;
+    const r=await validateKey(saved);
+    if (r.ok) { apiKey=saved; screen2(); } else { clearSaved(); screen1(); }
+  } else { screen1(); }
+})();
 </script>
 </body>
 </html>
