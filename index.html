@@ -21,22 +21,27 @@
   }
   #root { position: relative; z-index: 1; min-height: 100vh; }
 
+  /* ── Screen 1 ── */
   .screen-api { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
   .logo-icon { width: 72px; height: 72px; border-radius: 16px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.2rem; box-shadow: 0 0 40px rgba(0,229,255,0.2); }
-  .logo-title { font-size: 2.4rem; font-weight: 700; letter-spacing: 2px; text-align:center; }
-  .logo-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.75rem; margin-top: 0.3rem; letter-spacing: 1px; text-align:center; }
+  .logo-title { font-size: 2.4rem; font-weight: 700; letter-spacing: 2px; text-align: center; }
+  .logo-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.75rem; margin-top: 0.3rem; letter-spacing: 1px; text-align: center; }
   .api-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 500px; margin-top: 2.5rem; box-shadow: 0 0 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); }
   .api-card h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.4rem; }
-  .api-card > p { color: var(--muted); font-size: 0.93rem; margin-bottom: 1.8rem; line-height: 1.65; }
+  .api-card > p { color: var(--muted); font-size: 0.93rem; margin-bottom: 1.4rem; line-height: 1.65; }
 
   .field-label { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; }
   .api-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.82rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
   .api-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
   .api-input.err { border-color: var(--red); }
   .api-input.ok  { border-color: var(--green); }
-
   .s-inline { min-height: 1.4rem; margin-top: 0.5rem; font-family: 'Space Mono', monospace; font-size: 0.8rem; }
   .s-info { color: var(--muted); } .s-ok { color: var(--green); } .s-err { color: var(--red); }
+
+  /* creator type row */
+  .creator-row { display: flex; gap: 0.5rem; margin-top: 1rem; }
+  .cr-tab { flex: 1; padding: 0.45rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+  .cr-tab.on { background: var(--accent2); border-color: var(--accent2); color: #fff; }
 
   .toggle-row { display: flex; align-items: center; gap: 0.75rem; margin: 1.2rem 0 1.8rem; cursor: pointer; user-select: none; }
   .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
@@ -47,7 +52,7 @@
   .toggle input:checked ~ .tog-track .tog-thumb { transform: translateX(20px); }
   .tog-label { font-size: 0.9rem; color: var(--muted); }
   .tog-label b { color: var(--text); font-weight: 600; }
-  .api-help { font-size: 0.8rem; color: var(--muted); margin-top: 1rem; font-family: 'Space Mono', monospace; }
+  .api-help { font-size: 0.78rem; color: var(--muted); margin-top: 1rem; font-family: 'Space Mono', monospace; }
   .api-help a { color: var(--accent); text-decoration: none; }
 
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.4rem; border-radius: 8px; font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; border: none; cursor: pointer; transition: all 0.18s; text-transform: uppercase; }
@@ -57,11 +62,10 @@
   .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
   .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
   .btn-sm { font-size: 0.9rem; padding: 0.6rem 1.1rem; }
-
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink:0; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Dashboard */
+  /* ── Screen 2 ── */
   .topbar { background: rgba(16,16,26,0.92); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); padding: 0.9rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .topbar-left { display: flex; align-items: center; gap: 0.8rem; }
   .tb-logo { width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
@@ -83,7 +87,7 @@
 
   .groupbox { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; min-height: 200px; }
   .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 1px; background: var(--border); }
-  .a-card { background: var(--bg2); padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; transition: background 0.15s; cursor: default; }
+  .a-card { background: var(--bg2); padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; transition: background 0.15s; }
   .a-card:hover { background: var(--bg3); }
   .a-preview { width: 100%; aspect-ratio: 1; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
   .a-preview img { width: 100%; height: 100%; object-fit: contain; }
@@ -91,20 +95,20 @@
   .bg { background: var(--green); box-shadow: 0 0 8px var(--green); }
   .by { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
   .a-name { font-size: 0.88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .a-id { font-family: 'Space Mono', monospace; font-size: 0.63rem; color: var(--muted); }
+  .a-id { font-family: 'Space Mono', monospace; font-size: 0.63rem; color: var(--muted); word-break: break-all; }
   .a-tag { display: inline-block; padding: 0.13rem 0.45rem; border-radius: 4px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); width: fit-content; }
   .empty-st { padding: 4rem 2rem; text-align: center; color: var(--muted); }
   .empty-icon { font-size: 2.8rem; margin-bottom: 1rem; opacity: 0.25; }
 
-  /* Modal */
+  /* ── Modal ── */
   .m-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fi 0.15s ease; }
   @keyframes fi { from { opacity: 0; } }
-  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 540px; box-shadow: 0 0 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05); animation: su 0.2s ease; }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 540px; box-shadow: 0 0 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05); animation: su 0.2s ease; max-height: 90vh; overflow-y: auto; }
   @keyframes su { from { transform: translateY(20px); opacity: 0; } }
-  .m-head { padding: 1.4rem 1.7rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .m-head { padding: 1.4rem 1.7rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--card); z-index: 1; }
   .m-head h3 { font-size: 1.15rem; font-weight: 700; letter-spacing: 1px; }
   .m-body { padding: 1.4rem 1.7rem; display: flex; flex-direction: column; gap: 1.1rem; }
-  .m-foot { padding: 0.9rem 1.7rem 1.4rem; display: flex; gap: 0.7rem; justify-content: flex-end; }
+  .m-foot { padding: 0.9rem 1.7rem 1.4rem; display: flex; gap: 0.7rem; justify-content: flex-end; border-top: 1px solid var(--border); }
   .field { display: flex; flex-direction: column; gap: 0.45rem; }
   .tab-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
   .tab-btn { padding: 0.4rem 0.9rem; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-size: 0.83rem; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
@@ -116,9 +120,9 @@
   .up-zone:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.03); }
   .up-icon { font-size: 1.7rem; margin-bottom: 0.35rem; }
   .up-name { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--green); margin-top: 0.35rem; word-break: break-all; }
-  .m-status { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.7rem 0.9rem; font-family: 'Space Mono', monospace; font-size: 0.74rem; line-height: 1.6; }
+  .m-status { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.7rem 0.9rem; font-family: 'Space Mono', monospace; font-size: 0.74rem; line-height: 1.6; white-space: pre-wrap; }
   .ms-err { border-color: var(--red); color: var(--red); }
-  .ms-ok { border-color: var(--green); color: var(--green); }
+  .ms-ok  { border-color: var(--green); color: var(--green); }
   .ms-info { border-color: var(--accent); color: var(--accent); }
 
   @media (max-width: 600px) {
@@ -131,27 +135,38 @@
 </head>
 <body><div id="root"></div>
 <script>
-const SK = 'rbx_apikey_v3', AK = 'rbx_assets_v3';
+const SK = 'rbx_apikey_v3';
+const AK = 'rbx_assets_v3';
+const CK = 'rbx_creator_v3'; // stores {type:'user'|'group', id:'...'}
 const PROXY = '/api/roblox';
 
-const getSaved = () => { try { return localStorage.getItem(SK)||''; } catch { return ''; } };
-const setSaved = k => { try { localStorage.setItem(SK,k); } catch {} };
+const getSaved   = () => { try { return localStorage.getItem(SK)||''; } catch { return ''; } };
+const setSaved   = k  => { try { localStorage.setItem(SK, k); } catch {} };
 const clearSaved = () => { try { localStorage.removeItem(SK); } catch {} };
-const getLocal = () => { try { return JSON.parse(localStorage.getItem(AK)||'[]'); } catch { return []; } };
-const saveLocal = a => { try { localStorage.setItem(AK,JSON.stringify(a)); } catch {} };
+const getLocal   = () => { try { return JSON.parse(localStorage.getItem(AK)||'[]'); } catch { return []; } };
+const saveLocal  = a  => { try { localStorage.setItem(AK, JSON.stringify(a)); } catch {} };
+const getCreator = () => { try { return JSON.parse(localStorage.getItem(CK)||'null'); } catch { return null; } };
+const saveCreator= c  => { try { localStorage.setItem(CK, JSON.stringify(c)); } catch {} };
 
-let apiKey = '', localAssets = getLocal(), remoteAssets = [];
+let apiKey = '', localAssets = getLocal(), remoteAssets = [], creatorInfo = getCreator();
 
-// proxy call (server-side, bypasses CORS)
-async function rbx(path, method='GET', body=null, extraHeaders={}) {
+// ── Proxy helpers ──────────────────────────────────────────────────────────
+async function rbxGet(path) {
   return fetch(PROXY, {
     method: 'POST',
-    headers: { 'x-api-key': apiKey, 'x-roblox-path': path, 'x-roblox-method': method, ...extraHeaders },
-    body
+    headers: { 'x-api-key': apiKey, 'x-roblox-path': path, 'x-roblox-method': 'GET' }
   });
 }
 
-// Validate: anything that isn't 401/403 means the key authenticated
+async function rbxPost(path, formData) {
+  return fetch(PROXY, {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey, 'x-roblox-path': path, 'x-roblox-method': 'POST' },
+    body: formData   // browser FormData — proxy will re-parse & rebuild
+  });
+}
+
+// Validate: 401/403 = bad key; anything else = key authenticated
 async function validateKey(key) {
   try {
     const r = await fetch(PROXY, {
@@ -159,12 +174,36 @@ async function validateKey(key) {
       headers: { 'x-api-key': key, 'x-roblox-path': '/assets/v1/assets?assetType=Decal&limit=1', 'x-roblox-method': 'GET' }
     });
     return { ok: r.status !== 401 && r.status !== 403, status: r.status };
-  } catch(e) { return { ok: false, status: 0, err: e.message }; }
+  } catch(e) { return { ok: false, status: 0 }; }
 }
 
-// ── Screen 1 ──────────────────────────────────────────────────────────────
+// Poll an operation until done or timeout
+async function pollOperation(opPath, onProgress) {
+  const max = 20, delay = 3000;
+  for (let i = 0; i < max; i++) {
+    await new Promise(r => setTimeout(r, delay));
+    try {
+      const r = await rbxGet('/' + opPath);
+      const d = await r.json();
+      onProgress(`⏳ Polling operation… (${i+1}/${max})\n${JSON.stringify(d, null, 2)}`);
+      // done when response field exists or status is done/complete
+      if (d.response || d.done === true || (d.status && d.status !== 'pending' && d.status !== 'running')) {
+        const assetId = d.response?.assetId || d.assetId || d.response?.asset?.assetId;
+        return { done: true, assetId: assetId ? String(assetId) : null, raw: d };
+      }
+    } catch {}
+  }
+  return { done: false };
+}
+
+// ════════════════════════════════════════════════════════════════════
+// SCREEN 1
+// ════════════════════════════════════════════════════════════════════
+let s1CreatorType = (getCreator()?.type) || 'user';
+
 function screen1() {
   const saved = getSaved();
+  const creator = getCreator();
   document.getElementById('root').innerHTML = `
 <div class="screen-api">
   <div>
@@ -174,34 +213,72 @@ function screen1() {
   </div>
   <div class="api-card">
     <h2>Connect your API Key</h2>
-    <p>Enter your Roblox Open Cloud API key. In Creator Hub → Open Cloud → API Keys, create a key with <strong>Assets: read + write</strong> for your universe.</p>
+    <p>Enter your Roblox Open Cloud API key with <strong>Assets: read + write</strong> permission. Then set whether you're uploading to a User or Group.</p>
+
     <label class="field-label" for="ki">API KEY</label>
     <input class="api-input" type="password" id="ki" placeholder="paste key here…" autocomplete="off" value="${saved||''}" />
     <div class="s-inline s-info" id="ks"> </div>
-    <label class="toggle-row">
+
+    <label class="field-label" style="margin-top:1.2rem;">Upload as</label>
+    <div class="creator-row">
+      <button class="cr-tab ${s1CreatorType==='user'?'on':''}" onclick="s1CreatorType='user';document.getElementById('cr-tab-user').className='cr-tab on';document.getElementById('cr-tab-group').className='cr-tab';document.getElementById('creatorIdRow').style.display='flex'">👤 User</button>
+      <button class="cr-tab ${s1CreatorType==='group'?'on':''}" onclick="s1CreatorType='group';document.getElementById('cr-tab-group').className='cr-tab on';document.getElementById('cr-tab-user').className='cr-tab';document.getElementById('creatorIdRow').style.display='flex'" >👥 Group</button>
+    </div>
+    <div id="cr-tab-user" style="display:none"></div>
+    <div id="cr-tab-group" style="display:none"></div>
+
+    <div id="creatorIdRow" style="display:flex;flex-direction:column;gap:0.45rem;margin-top:0.8rem;">
+      <label class="field-label" id="creatorIdLabel">${s1CreatorType==='user'?'Your User ID':'Group ID'}</label>
+      <input class="api-input" type="text" id="creatorId" placeholder="${s1CreatorType==='user'?'e.g. 123456789':'e.g. 987654321'}" value="${creator?.id||''}" />
+      <div class="s-inline s-info" style="font-size:0.72rem;">Find your User ID at <a href="https://www.roblox.com/users/profile" target="_blank" style="color:var(--accent)">roblox.com/users/profile ↗</a></div>
+    </div>
+
+    <label class="toggle-row" style="margin-top:1rem;">
       <span class="toggle">
         <input type="checkbox" id="st" ${saved?'checked':''}>
         <span class="tog-track"><span class="tog-thumb"></span></span>
       </span>
       <span class="tog-label"><b>Remember</b> this key on next visit</span>
     </label>
+
     <button class="btn btn-primary" id="cb" onclick="doConnect()">
       <span class="spinner" id="cs" style="display:none"></span>
       Connect &amp; Validate
     </button>
-    <p class="api-help">Need a key? <a href="https://create.roblox.com/dashboard/credentials" target="_blank">Creator Hub → Open Cloud → API Keys ↗</a></p>
+    <p class="api-help" style="margin-top:1rem;">No key yet? <a href="https://create.roblox.com/dashboard/credentials" target="_blank">Creator Hub → Open Cloud → API Keys ↗</a></p>
   </div>
 </div>`;
+
+  // wire up tab clicks properly after render
+  document.querySelector('.creator-row').querySelectorAll('.cr-tab').forEach((btn, i) => {
+    btn.onclick = () => {
+      s1CreatorType = i === 0 ? 'user' : 'group';
+      document.querySelectorAll('.cr-tab').forEach((b,j) => b.classList.toggle('on', j===i));
+      document.getElementById('creatorIdLabel').textContent = s1CreatorType==='user' ? 'Your User ID' : 'Group ID';
+      document.getElementById('creatorId').placeholder = s1CreatorType==='user' ? 'e.g. 123456789' : 'e.g. 987654321';
+    };
+  });
 }
 
 function setKS(cls, msg) {
   const e = document.getElementById('ks'); if (!e) return;
   e.className = 's-inline ' + cls; e.textContent = msg;
 }
+function kicls(s) {
+  const e = document.getElementById('ki');
+  if (e) e.className = 'api-input ' + (s==='err'?'err':s==='ok'?'ok':'');
+}
 
 async function doConnect() {
-  const key = (document.getElementById('ki')?.value||'').trim();
+  const key       = (document.getElementById('ki')?.value||'').trim();
+  const creatorId = (document.getElementById('creatorId')?.value||'').trim();
+
   if (!key) { setKS('s-err','⚠ Paste a key first.'); kicls('err'); return; }
+  if (!creatorId || isNaN(Number(creatorId))) {
+    setKS('s-err', `⚠ Enter a valid ${s1CreatorType==='user'?'User ID':'Group ID'} (numbers only).`);
+    return;
+  }
+
   document.getElementById('cb').disabled = true;
   document.getElementById('cs').style.display = 'inline-block';
   setKS('s-info','⏳ Contacting Roblox via proxy…');
@@ -213,19 +290,22 @@ async function doConnect() {
 
   if (r.ok) {
     kicls('ok'); setKS('s-ok','✓ Key accepted — loading dashboard…');
+    creatorInfo = { type: s1CreatorType, id: creatorId };
+    saveCreator(creatorInfo);
     if (document.getElementById('st')?.checked) setSaved(key); else clearSaved();
     apiKey = key;
     setTimeout(screen2, 600);
   } else {
     kicls('err');
     setKS('s-err', r.status === 0
-      ? '✗ Proxy unreachable — deploy to Vercel first.'
+      ? '✗ Proxy unreachable — make sure you deployed to Vercel.'
       : `✗ Rejected (HTTP ${r.status}) — check Assets read+write scope.`);
   }
 }
-function kicls(s) { const e = document.getElementById('ki'); if(e) e.className = 'api-input '+(s==='err'?'err':s==='ok'?'ok':''); }
 
-// ── Screen 2 ──────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════
+// SCREEN 2
+// ════════════════════════════════════════════════════════════════════
 async function screen2() {
   document.getElementById('root').innerHTML = `
 <div>
@@ -259,23 +339,23 @@ async function screen2() {
   renderGrid();
 }
 
-function maskKey(k) { return k?k.slice(0,6)+'…'+k.slice(-4):'—'; }
-function signOut() { apiKey=''; screen1(); }
+function maskKey(k) { return k ? k.slice(0,6)+'…'+k.slice(-4) : '—'; }
+function signOut()  { apiKey = ''; screen1(); }
 
 async function loadAssets() {
   remoteAssets = [];
   try {
-    const r = await rbx('/assets/v1/assets?assetType=Decal&limit=50');
+    const r = await rbxGet('/assets/v1/assets?assetType=Decal&limit=50');
     if (r.ok) {
       const d = await r.json();
       const list = d.assets || d.data || [];
-      const lids = new Set(localAssets.map(a=>String(a.id)));
-      remoteAssets = list.map(a=>({
-        id: String(a.assetId||a.id||''),
-        name: a.displayName||a.name||'Unnamed',
-        assetType: a.assetType||'Decal',
-        previewUrl: a.thumbnailUrl||null,
-        createdByUs: lids.has(String(a.assetId||a.id||''))
+      const lids = new Set(localAssets.map(a => String(a.id)));
+      remoteAssets = list.map(a => ({
+        id: String(a.assetId || a.id || ''),
+        name: a.displayName || a.name || 'Unnamed',
+        assetType: 'Decal',
+        previewUrl: a.thumbnailUrl || null,
+        createdByUs: lids.has(String(a.assetId || a.id || ''))
       }));
     }
   } catch {}
@@ -284,8 +364,8 @@ async function loadAssets() {
 function renderGrid() {
   const gb = document.getElementById('gb'); if (!gb) return;
   const combined = [
-    ...localAssets.map(a=>({...a, createdByUs:true})),
-    ...remoteAssets.filter(ra=>!localAssets.find(la=>String(la.id)===ra.id))
+    ...localAssets.map(a => ({...a, createdByUs: true})),
+    ...remoteAssets.filter(ra => !localAssets.find(la => String(la.id) === ra.id))
   ];
   if (!combined.length) {
     gb.innerHTML = `<div class="empty-st"><div class="empty-icon">📦</div><p>No assets yet — hit <strong>＋ New Asset</strong> to create your first.</p></div>`;
@@ -302,33 +382,43 @@ function mkCard(a) {
   const src = a.previewDataUrl || a.previewUrl;
   d.innerHTML = `
     <div class="a-preview">
-      ${src ? `<img src="${src}" alt="${a.name}" />` : '<span style="font-size:2rem;opacity:0.2">🖼</span>'}
+      ${src ? `<img src="${src}" alt="${a.name}" loading="lazy" />` : '<span style="font-size:2rem;opacity:0.2">🖼</span>'}
       <span class="a-badge ${a.createdByUs?'bg':'by'}"></span>
     </div>
     <div class="a-name" title="${a.name}">${a.name}</div>
-    <div class="a-id">${a.id?'ID: '+a.id:'Pending…'}</div>
-    <div class="a-tag">${a.assetType||'Decal'}</div>`;
+    <div class="a-id">${a.id && a.id !== 'pending' ? 'ID: '+a.id : (a.opPath ? '⏳ Processing…' : 'Pending…')}</div>
+    <div class="a-tag">Decal</div>`;
   return d;
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════
+// CREATE MODAL
+// ════════════════════════════════════════════════════════════════════
 let ms = {};
+
 function openModal() {
   ms = { name:'', fmt:'png', mode:'paste', svgT:'', pngT:'', file:null, status:'', stype:'', busy:false };
   drawModal();
 }
-function closeModal() { document.getElementById('mo')?.remove(); }
+function closeModal() { if (!ms.busy) document.getElementById('mo')?.remove(); }
+
+function setStatus(msg, type='info') {
+  ms.status = msg; ms.stype = type;
+  const el = document.getElementById('mstatus');
+  if (el) { el.className = 'm-status ms-'+type; el.textContent = msg; }
+  else drawModal();
+}
 
 function drawModal() {
   document.getElementById('mo')?.remove();
   const ov = document.createElement('div');
   ov.id = 'mo'; ov.className = 'm-overlay';
-  ov.onclick = e => { if(e.target===ov) closeModal(); };
+  ov.onclick = e => { if (e.target === ov) closeModal(); };
   ov.innerHTML = `
 <div class="modal">
   <div class="m-head">
     <h3>✦ Create New Asset</h3>
-    <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()" ${ms.busy?'disabled':''}>✕</button>
   </div>
   <div class="m-body">
     <div class="field">
@@ -339,8 +429,11 @@ function drawModal() {
       <label class="field-label">Format</label>
       <div class="tab-row">
         <button class="tab-btn ${ms.fmt==='png'?'on':''}" onclick="ms.fmt='png';drawModal()">PNG</button>
-        <button class="tab-btn ${ms.fmt==='svg'?'on':''}" onclick="ms.fmt='svg';drawModal()">SVG</button>
+        <button class="tab-btn ${ms.fmt==='jpeg'?'on':''}" onclick="ms.fmt='jpeg';drawModal()">JPEG</button>
+        <button class="tab-btn ${ms.fmt==='bmp'?'on':''}" onclick="ms.fmt='bmp';drawModal()">BMP</button>
+        <button class="tab-btn ${ms.fmt==='tga'?'on':''}" onclick="ms.fmt='tga';drawModal()">TGA</button>
       </div>
+      <div style="font-size:0.72rem;color:var(--muted);font-family:'Space Mono',monospace;">Roblox Decals accept: PNG, JPEG, BMP, TGA</div>
     </div>
     <div class="field">
       <label class="field-label">Input Method</label>
@@ -350,12 +443,12 @@ function drawModal() {
       </div>
     </div>
     <div class="field" id="cf"></div>
-    ${ms.status?`<div class="m-status ${ms.stype==='err'?'ms-err':ms.stype==='ok'?'ms-ok':'ms-info'}">${ms.status}</div>`:''}
+    ${ms.status ? `<div class="m-status ms-${ms.stype}" id="mstatus">${ms.status}</div>` : ''}
   </div>
   <div class="m-foot">
-    <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-ghost btn-sm" onclick="closeModal()" ${ms.busy?'disabled':''}>Cancel</button>
     <button class="btn btn-primary btn-sm" style="width:auto;min-width:145px;" id="dcb" onclick="doCreate()" ${ms.busy?'disabled':''}>
-      ${ms.busy?'<span class="spinner"></span> Creating…':'✦ Create Asset'}
+      ${ms.busy ? '<span class="spinner"></span> Creating…' : '✦ Create Asset'}
     </button>
   </div>
 </div>`;
@@ -365,110 +458,148 @@ function drawModal() {
 
 function drawContentField() {
   const f = document.getElementById('cf'); if (!f) return;
-  f.innerHTML = `<label class="field-label">${ms.fmt.toUpperCase()} Content</label>`;
-  if (ms.mode==='paste') {
+  const mimeMap = { png:'image/png', jpeg:'image/jpeg', bmp:'image/bmp', tga:'image/x-tga' };
+  const mime = mimeMap[ms.fmt] || 'image/png';
+  f.innerHTML = `<label class="field-label">Image Content (${ms.fmt.toUpperCase()})</label>`;
+
+  if (ms.mode === 'paste') {
     const ta = document.createElement('textarea');
     ta.className = 'paste-ta';
-    ta.placeholder = ms.fmt==='svg'
-      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">…</svg>'
-      : 'Paste base64 PNG string or data:image/png;base64,… URL';
-    ta.value = ms.fmt==='svg' ? ms.svgT : ms.pngT;
-    ta.oninput = e => { if(ms.fmt==='svg') ms.svgT=e.target.value; else ms.pngT=e.target.value; };
+    ta.placeholder = 'Paste base64-encoded image data, or a data:image/png;base64,… URL';
+    ta.value = ms.pasteT || '';
+    ta.oninput = e => { ms.pasteT = e.target.value; };
     f.appendChild(ta);
   } else {
-    const accept = ms.fmt==='svg' ? '.svg,image/svg+xml' : '.png,image/png';
-    const z = document.createElement('div'); z.className='up-zone';
-    z.innerHTML = `<div class="up-icon">${ms.fmt==='svg'?'🖊':'🖼'}</div>
+    const accept = `.${ms.fmt},${mime}`;
+    const z = document.createElement('div'); z.className = 'up-zone';
+    z.innerHTML = `<div class="up-icon">🖼</div>
       <div>Click to upload .${ms.fmt} file</div>
       <input type="file" accept="${accept}" style="display:none" id="fi" />
-      <div class="up-name" id="un">${ms.file?ms.file.name:''}</div>`;
+      <div class="up-name" id="un">${ms.file ? ms.file.name : ''}</div>`;
     z.onclick = () => document.getElementById('fi')?.click();
     f.appendChild(z);
-    setTimeout(()=>{
-      const fi=document.getElementById('fi');
-      if(fi) fi.onchange=e=>{ ms.file=e.target.files[0]||null; const u=document.getElementById('un'); if(u&&ms.file)u.textContent=ms.file.name; };
-    },0);
+    setTimeout(() => {
+      const fi = document.getElementById('fi');
+      if (fi) fi.onchange = e => {
+        ms.file = e.target.files[0] || null;
+        const u = document.getElementById('un');
+        if (u && ms.file) u.textContent = ms.file.name;
+      };
+    }, 0);
   }
 }
 
 async function doCreate() {
-  ms.name = (document.getElementById('mn')?.value||'').trim();
-  if (!ms.name) { ms.status='⚠ Enter an asset name.'; ms.stype='err'; drawModal(); return; }
+  ms.name = (document.getElementById('mn')?.value || '').trim();
+  if (!ms.name) { setStatus('⚠ Enter an asset name.', 'err'); return; }
 
-  let blob, mime;
-  if (ms.mode==='paste') {
-    const raw = (ms.fmt==='svg'?ms.svgT:ms.pngT).trim();
-    if (!raw) { ms.status='⚠ Paste some content.'; ms.stype='err'; drawModal(); return; }
-    if (ms.fmt==='svg') {
-      mime='image/svg+xml'; blob=new Blob([raw],{type:mime});
-    } else {
-      try {
-        let b64=raw.includes(',')?raw.split(',')[1]:raw;
-        const bstr=atob(b64), arr=new Uint8Array(bstr.length);
-        for(let i=0;i<bstr.length;i++) arr[i]=bstr.charCodeAt(i);
-        mime='image/png'; blob=new Blob([arr],{type:mime});
-      } catch { ms.status='✗ Invalid PNG base64.'; ms.stype='err'; drawModal(); return; }
-    }
+  const mimeMap = { png:'image/png', jpeg:'image/jpeg', bmp:'image/bmp', tga:'image/x-tga' };
+  const mime = mimeMap[ms.fmt] || 'image/png';
+  let blob;
+
+  if (ms.mode === 'paste') {
+    const raw = (ms.pasteT || '').trim();
+    if (!raw) { setStatus('⚠ Paste some image data.', 'err'); return; }
+    try {
+      let b64 = raw.includes(',') ? raw.split(',')[1] : raw;
+      const bstr = atob(b64), arr = new Uint8Array(bstr.length);
+      for (let i = 0; i < bstr.length; i++) arr[i] = bstr.charCodeAt(i);
+      blob = new Blob([arr], { type: mime });
+    } catch { setStatus('✗ Invalid base64 data.', 'err'); return; }
   } else {
-    if (!ms.file) { ms.status='⚠ Upload a file first.'; ms.stype='err'; drawModal(); return; }
-    mime=ms.file.type||(ms.fmt==='svg'?'image/svg+xml':'image/png');
-    blob=ms.file;
+    if (!ms.file) { setStatus('⚠ Upload a file first.', 'err'); return; }
+    blob = ms.file;
   }
 
-  let previewDataUrl=null;
+  // Generate local preview
+  let previewDataUrl = null;
   try {
-    previewDataUrl = await new Promise((res,rej)=>{
-      const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(blob);
+    previewDataUrl = await new Promise((res, rej) => {
+      const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(blob);
     });
   } catch {}
 
-  ms.busy=true; ms.status='⏳ Uploading to Roblox Open Cloud…'; ms.stype='info'; drawModal();
+  ms.busy = true; setStatus('⏳ Sending to Roblox Open Cloud…', 'info');
 
   try {
-    const form=new FormData();
-    form.append('request', new Blob([JSON.stringify({
-      assetType:'Decal', displayName:ms.name, description:'Created via Asset Forge',
-      creationContext:{creator:{}}
-    })],{type:'application/json'}));
+    // Build the request metadata JSON string — must match Roblox's schema exactly
+    const creatorKey = creatorInfo?.type === 'group' ? 'groupId' : 'userId';
+    const requestObj = {
+      assetType: 'Decal',
+      displayName: ms.name,
+      description: 'Uploaded via Asset Forge',
+      creationContext: {
+        creator: { [creatorKey]: creatorInfo?.id || '' }
+      }
+    };
+
+    // Build FormData — browser FormData is parsed by busboy in the proxy and rebuilt cleanly
+    const form = new FormData();
+    // 'request' field: must be the raw JSON string (not a Blob)
+    form.append('request', JSON.stringify(requestObj));
+    // 'fileContent' field: the actual binary file
     form.append('fileContent', blob, `asset.${ms.fmt}`);
 
-    // Don't set Content-Type — browser sets multipart boundary automatically
-    const r = await fetch(PROXY, {
-      method:'POST',
-      headers:{ 'x-api-key':apiKey, 'x-roblox-path':'/assets/v1/assets', 'x-roblox-method':'POST' },
-      body:form
-    });
+    const r = await rbxPost('/assets/v1/assets', form);
+    let data; try { data = await r.json(); } catch { data = {}; }
 
-    let data; try { data=await r.json(); } catch { data={}; }
-
-    if (r.ok) {
-      const id=String(data.assetId||data.operationId||data.id||Date.now());
-      const na={id, name:ms.name, assetType:'Decal', previewDataUrl, createdByUs:true, created:Date.now()};
-      localAssets.unshift(na); saveLocal(localAssets);
-      ms.busy=false; ms.status=`✓ Asset created! ID: ${id}`; ms.stype='ok'; drawModal();
-      renderGrid();
-      setTimeout(closeModal, 2000);
-    } else {
-      const msg=data.message||data.error||data.errors?.[0]?.message||JSON.stringify(data);
-      ms.busy=false; ms.status=`✗ Roblox error (${r.status}): ${msg}`; ms.stype='err'; drawModal();
+    if (!r.ok) {
+      const msg = data.message || data.error || data.errors?.[0]?.message || JSON.stringify(data);
+      ms.busy = false; setStatus(`✗ Roblox error (${r.status}): ${msg}`, 'err');
+      return;
     }
-  } catch(e) {
-    ms.busy=false; ms.status=`✗ Network error: ${e.message}`; ms.stype='err'; drawModal();
+
+    // Success — Roblox returns { path: "operations/xxxx" }
+    const opPath = data.path; // e.g. "operations/abc123"
+    setStatus(`✓ Upload accepted!\nOperation: ${opPath}\n⏳ Polling for asset ID…`, 'info');
+
+    // Add a placeholder card immediately
+    const placeholderAsset = {
+      id: 'pending', name: ms.name, assetType: 'Decal',
+      previewDataUrl, createdByUs: true, opPath, created: Date.now()
+    };
+    localAssets.unshift(placeholderAsset);
+    saveLocal(localAssets);
+    renderGrid();
+
+    // Poll the operation for the real asset ID
+    const result = await pollOperation(opPath, msg => setStatus(msg, 'info'));
+
+    if (result.done && result.assetId) {
+      // Update the placeholder with the real ID
+      const idx = localAssets.findIndex(a => a.opPath === opPath);
+      if (idx !== -1) { localAssets[idx].id = result.assetId; localAssets[idx].opPath = null; saveLocal(localAssets); }
+      ms.busy = false;
+      setStatus(`✓ Done! Asset ID: ${result.assetId}`, 'ok');
+      renderGrid();
+      setTimeout(closeModal, 2500);
+    } else {
+      ms.busy = false;
+      setStatus(`✓ Uploaded! Asset is being processed by Roblox.\nCheck back soon — it may take a few minutes.`, 'ok');
+      renderGrid();
+      setTimeout(closeModal, 3000);
+    }
+
+  } catch (e) {
+    ms.busy = false; setStatus(`✗ Network error: ${e.message}`, 'err');
   }
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────
-(async()=>{
-  const saved=getSaved();
+(async () => {
+  const saved = getSaved();
   if (saved) {
-    document.getElementById('root').innerHTML=`
+    document.getElementById('root').innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:1rem;">
         <div class="spinner" style="width:38px;height:38px;border-width:3px;border-top-color:var(--accent)"></div>
         <div style="font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:2px;font-size:0.78rem;">VALIDATING SAVED KEY…</div>
       </div>`;
-    const r=await validateKey(saved);
-    if (r.ok) { apiKey=saved; screen2(); } else { clearSaved(); screen1(); }
-  } else { screen1(); }
+    const r = await validateKey(saved);
+    if (r.ok) { apiKey = saved; screen2(); }
+    else { clearSaved(); screen1(); }
+  } else {
+    screen1();
+  }
 })();
 </script>
 </body>
